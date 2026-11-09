@@ -1,0 +1,22 @@
+{# The standings drawn as ships around a star. Positions come from rules.orbit_map. #}
+<svg class="orbit-svg" viewBox="0 0 400 400" role="img" aria-label="Orbit map. Teams closer to the star are ranked higher.">
+    <defs>
+        <radialGradient id="star">
+            <stop offset="0%" stop-color="#ffedd5"/>
+            <stop offset="55%" stop-color="#fb923c"/>
+            <stop offset="100%" stop-color="#fb923c" stop-opacity="0"/>
+        </radialGradient>
+    </defs>
+    {% for radius in [48, 79, 110, 141, 172] %}
+    <circle cx="200" cy="200" r="{{ radius }}" fill="none" stroke="#22314f" stroke-dasharray="2 5"/>
+    {% endfor %}
+    <circle cx="200" cy="200" r="30" fill="url(#star)"/>
+    {% for ship in ships %}
+    <circle cx="{{ ship.x }}" cy="{{ ship.y }}" r="{{ 6 if ship.top_three else 3.5 }}" fill="{{ '#22d3ee' if ship.top_three else '#9db0cc' }}"/>
+    {% if ship.top_three %}
+    <text x="{{ ship.x - 11 if ship.label_left else ship.x + 11 }}" y="{{ ship.y + 4 }}"
+          text-anchor="{{ 'end' if ship.label_left else 'start' }}" fill="#e6f1ff" font-size="13" font-family="Chakra Petch, sans-serif"
+          paint-order="stroke" stroke="#0a1020" stroke-width="4">{{ ship.name }}</text>
+    {% endif %}
+    {% endfor %}
+</svg>

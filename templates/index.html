@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-title">
+    <div>
+        <h1>Space Battle standings</h1>
+        <div class="status-row">
+            <span id="live-status" class="status">Connecting</span>
+            <span id="last-updated"></span>
+        </div>
+    </div>
+    <a class="button" href="{{ url_for('display') }}">Open projector view</a>
+</div>
+
+<p id="announcer" class="visually-hidden" aria-live="polite"></p>
+<p id="connection-warning" class="warning" role="status" hidden>
+    Connection interrupted. Showing the latest standings while reconnecting.
+</p>
+
+<div id="live-board" data-url="{{ url_for('live_board') }}">
+    <div class="panel loading">Loading the leaderboard...</div>
+</div>
+
+<section class="panel padded ranking-note">
+    <h2>How ranking works</h2>
+    <p>Each team is ranked by its highest single match score. Later, lower scores never hurt
+       a team. Equal best scores share a rank. <a href="{{ url_for('rules_page') }}">See the full rules</a></p>
+</section>
+
+<script src="{{ url_for('static', filename='live.js') }}"></script>
+{% endblock %}

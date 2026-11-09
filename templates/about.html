@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}About | Space Battle{% endblock %}
+{% block content %}
+<div class="reading">
+    <h1>Mission Control</h1>
+    <p class="lead">Space Battle is a tournament where teams compete for the highest score.
+       Mission Control is where results land and spectators follow the fight.</p>
+
+    <section class="section">
+        <h2>From match to scoreboard</h2>
+        <ol class="journey">
+            <li><strong>1</strong><h3>A match ends</h3><p>The match system sends the team name and score to the API.</p></li>
+            <li><strong>2</strong><h3>The server checks it</h3><p>Every field is validated before anything is stored.</p></li>
+            <li><strong>3</strong><h3>The result is saved</h3><p>The database keeps each match as its own record.</p></li>
+            <li><strong>4</strong><h3>The board catches up</h3><p>Every screen fetches new standings about every three seconds.</p></li>
+        </ol>
+    </section>
+
+    <section class="section">
+        <h2>The team</h2>
+        <ul style="margin-top: 12px">{% for member in members %}<li>{{ member }}</li>{% endfor %}</ul>
+        <p>TSA@RHS Webmaster qualifier</p>
+    </section>
+
+    <section class="section">
+        <h2>Credits and citations</h2>
+        <div class="scroll" role="region" aria-label="Credits" tabindex="0">
+            <table style="min-width: 560px">
+                <thead><tr><th scope="col">Work</th><th scope="col">Used for</th><th scope="col">License</th></tr></thead>
+                <tbody>
+                    <tr><td>Flask</td><td class="dim">Python web framework</td><td class="dim">BSD 3-Clause</td></tr>
+                    <tr><td>SQLite</td><td class="dim">Database</td><td class="dim">Public domain</td></tr>
+                    <tr><td>Chakra Petch</td><td class="dim">Display typeface by Cadson Demak</td><td class="dim">SIL Open Font License</td></tr>
+                    <tr><td>IBM Plex Sans and Mono</td><td class="dim">Text and data typefaces by IBM</td><td class="dim">SIL Open Font License</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <p><strong>AI assistance:</strong> this site's code, design, and written content were generated
+           with Claude, an AI model by Anthropic. The emblem and interface graphics were created for this site.</p>
+    </section>
+</div>
+{% endblock %}
