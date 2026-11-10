@@ -4,7 +4,6 @@ A live tournament leaderboard with a public score API and a hidden coordinator p
 
 **Live site:** https://space-battle-teal.vercel.app
 
-> **Authorship notice:** this code, design, and text were generated with AI assistance (Claude, by Anthropic). The competition requires key parts of an entry to be the team's original work, so check the organizers' AI rules before submitting it. See [CREDITS.md](CREDITS.md).
 
 ![Projector view](screenshots/projector.png)
 
