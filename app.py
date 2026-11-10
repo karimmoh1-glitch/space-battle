@@ -9,7 +9,6 @@ import json
 import os
 import random
 import secrets
-import sqlite3
 import sys
 from datetime import datetime, timedelta, timezone
 
@@ -357,13 +356,17 @@ def wants_json():
     return request.path.startswith("/api/")
 
 
-@app.errorhandler(sqlite3.Error)
 def database_problem(error):
     app.logger.error("Database error: %s", error)
     if wants_json() or request.path.startswith("/live/"):
         return api_error("The database is unavailable. Please retry shortly.", 503)
     return render_template("error.html", title="System fault",
                            message="The database is unavailable. Please try again shortly."), 503
+
+
+# SQLite and Postgres each have their own error types, so the same handler answers both.
+for error_type in database.DATABASE_ERRORS:
+    app.register_error_handler(error_type, database_problem)
 
 
 @app.errorhandler(404)

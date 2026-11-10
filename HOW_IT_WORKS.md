@@ -18,7 +18,9 @@ The browser never talks to the database. Only Python does.
 - `build_teams` loops through every match and builds a dictionary with one entry per team.
 - `rank_teams` sorts the teams, then walks the list. If a team has the same best score as the team before it, it copies that rank. Otherwise its rank is its position. That one `if` is what makes 1, 1, 3.
 
-**`database.py`** holds all SQL. The `?` marks let SQLite insert values safely, so text someone types can never run as SQL.
+**`database.py`** holds all SQL. The `?` marks let the database insert values safely, so text someone types can never run as SQL.
+
+It works with two databases. On your computer it uses SQLite, a single file. On Vercel, files are erased between requests, so the live site uses Postgres, a database server. If the `DATABASE_URL` setting exists, `connect()` opens Postgres; otherwise it opens the file. The two speak almost the same SQL. The `run` function swaps `?` for `%s`, the blank Postgres expects, and `search_results` picks `strpos` or `instr`.
 
 **`app.py`** connects web addresses to functions. `@app.route("/rules")` means "when someone visits /rules, run the function below."
 
@@ -75,4 +77,4 @@ Try each of these without looking at the answer first.
 2. What happens when two requests use the same `submissionId` at once?
 3. How do two teams tied at 410 get ranks, and what rank comes next?
 4. What does the hidden address protect, and what does the password protect?
-5. Why can't this version be hosted on Vercel?
+5. Why does the live site need Postgres instead of the SQLite file?

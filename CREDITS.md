@@ -11,7 +11,15 @@ The qualifier rules say structural database logic, API routing, and interface de
 | Work | Purpose | License | Source |
 |---|---|---|---|
 | Flask 3.1.3 | Python web framework | BSD 3-Clause | https://flask.palletsprojects.com |
-| SQLite | Database, included with Python | Public domain | https://sqlite.org |
+| SQLite | Database on your computer, included with Python | Public domain | https://sqlite.org |
+| psycopg 3.3.8 | Connects Python to Postgres | LGPL 3.0 | https://www.psycopg.org |
+
+## Hosting
+
+| Service | Purpose | Source |
+|---|---|---|
+| Vercel (free Hobby plan) | Runs the live site | https://vercel.com |
+| Neon (free plan) | Postgres database for the live site | https://neon.com |
 
 ## Fonts
 

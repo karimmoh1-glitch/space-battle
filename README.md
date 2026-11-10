@@ -1,6 +1,8 @@
 # SPACE BATTLE: Mission Control
 
-A live tournament leaderboard with a public score API and a hidden coordinator panel, for the TSA@RHS Webmaster qualifier. Built with Python (Flask), SQLite, HTML, and CSS.
+A live tournament leaderboard with a public score API and a hidden coordinator panel, for the TSA@RHS Webmaster qualifier. Built with Python (Flask), HTML, and CSS, using SQLite on your computer and Postgres on the live site.
+
+**Live site:** https://space-battle-teal.vercel.app
 
 > **Authorship notice:** this code, design, and text were generated with AI assistance (Claude, by Anthropic). The competition requires key parts of an entry to be the team's original work, so check the organizers' AI rules before submitting it. See [CREDITS.md](CREDITS.md).
 
@@ -87,7 +89,7 @@ export SECRET_KEY="any-long-random-text"
 python app.py
 ```
 
-Results are saved in `spacebattle.db`, which is deliberately not uploaded to GitHub.
+Results are saved in `spacebattle.db`, which is deliberately not uploaded to GitHub. If a `DATABASE_URL` setting exists, results go to that Postgres database instead.
 
 ## Admin panel
 
@@ -95,17 +97,17 @@ Go to `/ops/<ADMIN_PATH>` and enter the password. You can search, filter, add, c
 
 ## Hosting
 
-SQLite is a file on disk, so the host must keep files between requests. **Vercel and similar serverless hosts will not work.**
+The live site runs on **Vercel** with a free **Neon Postgres** database. Vercel erases files between requests, so SQLite cannot be used there. `database.py` switches to Postgres whenever `DATABASE_URL` is set.
 
-PythonAnywhere has a free plan that suits this. In short:
+How it was set up:
 
-1. Make an account and upload the code, or `git clone` it in a Bash console.
-2. Create a virtual environment and run `pip install -r requirements.txt`.
-3. Add a Flask web app pointing at this folder.
-4. In its WSGI file, set the three variables above with `os.environ[...]`, then `from app import app as application`.
-5. Reload the app, then test it with `python tests/live_check.py https://yourname.pythonanywhere.com`. That script creates test teams, so reset the tournament afterward.
+1. `npx vercel link` created the Vercel project. Vercel finds `app.py` and `requirements.txt` by itself.
+2. `npx vercel integration add neon` created the database and added `DATABASE_URL` to the project.
+3. `ADMIN_PASSWORD`, `ADMIN_PATH`, and `SECRET_KEY` were added as sensitive variables with `npx vercel env add`.
+4. `npx vercel deploy --prod` put it online. The table is created automatically on the first request.
+5. `python tests/live_check.py https://space-battle-teal.vercel.app` tested it. That script creates test teams, so reset the tournament afterward.
 
-Check PythonAnywhere's current free-plan limits and expiry rules, and log in before the judging date so the site does not expire.
+To update the live site after changing code, run `npx vercel deploy --prod` again. `.vercelignore` keeps tests, screenshots, and local databases out of the upload.
 
 ## Tests
 
@@ -125,7 +127,7 @@ python tests/live_check.py http://localhost:8000
 |---|---|
 | `app.py` | Web addresses and what each one does |
 | `rules.py` | Validation and ranking, as plain functions |
-| `database.py` | Every SQL statement |
+| `database.py` | Every SQL statement, for SQLite and Postgres |
 | `templates/` | The HTML pages |
 | `static/style.css` | All of the design |
 | `static/live.js` | Refreshes the board every 3 seconds |
