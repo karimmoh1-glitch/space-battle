@@ -1,41 +1,33 @@
 {% extends "base.html" %}
-{% block title %}Rules | Space Battle{% endblock %}
+{% block title %}Rules{% endblock %}
+
 {% block content %}
-<div class="reading">
-    <h1>How the battle is scored</h1>
-    <p class="lead">One number decides a team's place: the highest score it has posted in any single match.</p>
+<h1>Rules</h1>
 
-    <section class="section panel padded">
-        <h2>A worked example</h2>
-        <p class="dim">Five fictional teams and how they would rank.</p>
-        <div class="scroll" role="region" aria-label="Worked ranking example" tabindex="0">
-            <table style="min-width: 560px">
-                <thead><tr><th scope="col">Rank</th><th scope="col">Team</th><th class="right" scope="col">Best</th><th scope="col">Why</th></tr></thead>
-                <tbody>
-                    <tr><td class="rank-cell">1</td><td>Vega Lancers</td><td class="score-cell right">455</td><td class="dim">Highest best score, even with only two matches.</td></tr>
-                    <tr><td class="rank-cell">2</td><td>Titan Forge</td><td class="score-cell right">410</td><td class="dim">Tied at 410 and reached it first, so listed first.</td></tr>
-                    <tr><td class="rank-cell">2</td><td>Ceres Guild</td><td class="score-cell right">410</td><td class="dim">Shares rank 2. No team is placed at rank 3.</td></tr>
-                    <tr><td class="rank-cell">4</td><td>Europa Deep</td><td class="score-cell right">120</td><td class="dim">Rank 4 because two teams share rank 2.</td></tr>
-                    <tr><td class="rank-cell">5</td><td>Nightside Relay</td><td class="score-cell right">-18</td><td class="dim">A negative best still ranks, below every higher score.</td></tr>
-                </tbody>
-            </table>
-        </div>
-    </section>
+<h2>How teams are ranked</h2>
+<p>Each team is ranked by its <strong>best score from a single match</strong>. A bad match never
+   lowers a team's rank. The leaderboard also shows each team's total and how many matches it played.</p>
 
-    <section class="section callout">
-        <h2>When teams tie</h2>
-        <p>Teams with the same best score share a rank and show a TIE marker. The next rank is
-           skipped, giving 1, 1, 3. Within a tie, the team that reached the score first is listed first.</p>
-    </section>
+<h2>Ties</h2>
+<p>Teams with the same best score share a rank, and the next rank is skipped.</p>
 
-    <section class="section">
-        <h2>The fine print</h2>
-        <dl class="two-columns">
-            <div><dt>Repeat matches</dt><dd>Every result is kept, and only a team's best score sets its rank. A bad match never lowers a team's position.</dd></div>
-            <div><dt>Team names</dt><dd>Extra spaces and capitalization are ignored, so NOVA SQUAD and Nova  Squad are one team. The board shows the latest spelling.</dd></div>
-            <div><dt>Negative scores</dt><dd>Scores can be below zero and there is no minimum or maximum. A best of -18 ranks above a best of -40.</dd></div>
-            <div><dt>Corrections</dt><dd>Coordinators can correct or remove a result. The original value is kept with any correction.</dd></div>
-        </dl>
-    </section>
-</div>
+<table>
+    <thead>
+        <tr><th>Rank</th><th>Team</th><th>Best score</th></tr>
+    </thead>
+    <tbody>
+        <tr><td>1</td><td>Vega Lancers</td><td>455</td></tr>
+        <tr><td>2</td><td>Titan Forge</td><td>410</td></tr>
+        <tr><td>2</td><td>Ceres Guild</td><td>410</td></tr>
+        <tr><td>4</td><td>Europa Deep</td><td>120</td></tr>
+        <tr><td>5</td><td>Nightside Relay</td><td>-18</td></tr>
+    </tbody>
+</table>
+
+<h2>Other rules</h2>
+<ul>
+    <li>Scores are whole numbers and can be negative.</li>
+    <li>Capital letters and extra spaces in team names don't matter. "NOVA SQUAD" and "Nova Squad" are the same team.</li>
+    <li>Tournament staff can fix or delete a result if a mistake is made.</li>
+</ul>
 {% endblock %}

@@ -1,8 +1,0 @@
-{# Shows an arrow if this team just moved. Uses the variables team, moved_key, places_moved. #}
-{% if team.key == moved_key and places_moved != 0 %}
-    {% if places_moved > 0 %}
-    <span class="move-up"><span aria-hidden="true">&#9650;{{ places_moved }}</span><span class="visually-hidden">Up {{ places_moved }}</span></span>
-    {% else %}
-    <span class="move-down"><span aria-hidden="true">&#9660;{{ -places_moved }}</span><span class="visually-hidden">Down {{ -places_moved }}</span></span>
-    {% endif %}
-{% endif %}

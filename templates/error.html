@@ -1,7 +1,10 @@
 {% extends "base.html" %}
-{% block title %}{{ title }} | Space Battle{% endblock %}
+{% block title %}Error{% endblock %}
+
 {% block content %}
-<h1>{{ title }}</h1>
-<p class="lead">{{ message }}</p>
-<p style="margin-top: 24px"><a class="button button-primary" href="{{ url_for('home') }}">Return to the leaderboard</a></p>
+<article>
+    <h1>Houston, we have a problem</h1>
+    <p>{{ message }}</p>
+    <a href="/" role="button">Back to the leaderboard</a>
+</article>
 {% endblock %}

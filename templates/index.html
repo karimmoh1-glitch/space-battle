@@ -1,30 +1,59 @@
 {% extends "base.html" %}
+{% block title %}Leaderboard{% endblock %}
+
+{% block head %}
+    <!-- Reload the page every 5 seconds so new scores show up -->
+    <meta http-equiv="refresh" content="5">
+{% endblock %}
+
 {% block content %}
-<div class="page-title">
-    <div>
-        <h1>Space Battle standings</h1>
-        <div class="status-row">
-            <span id="live-status" class="status">Connecting</span>
-            <span id="last-updated"></span>
-        </div>
+<hgroup>
+    <h1>Leaderboard</h1>
+    <p>{{ teams|length }} teams · {{ match_count }} matches · updates every 5 seconds</p>
+</hgroup>
+
+{% if teams|length == 0 %}
+    <article>
+        <h3>No scores yet</h3>
+        <p>The board fills in as soon as the first match is sent in.</p>
+    </article>
+{% else %}
+    <div class="grid">
+        {% for team in teams[:3] %}
+            <article>
+                <header>
+                    {% if team.rank == 1 %}🥇{% elif team.rank == 2 %}🥈{% else %}🥉{% endif %}
+                    Rank {{ team.rank }}
+                </header>
+                <h3>{{ team.name }}</h3>
+                <p>Best score: <strong>{{ team.best }}</strong></p>
+            </article>
+        {% endfor %}
     </div>
-    <a class="button" href="{{ url_for('display') }}">Open projector view</a>
-</div>
 
-<p id="announcer" class="visually-hidden" aria-live="polite"></p>
-<p id="connection-warning" class="warning" role="status" hidden>
-    Connection interrupted. Showing the latest standings while reconnecting.
-</p>
-
-<div id="live-board" data-url="{{ url_for('live_board') }}">
-    <div class="panel loading">Loading the leaderboard...</div>
-</div>
-
-<section class="panel padded ranking-note">
-    <h2>How ranking works</h2>
-    <p>Each team is ranked by its highest single match score. Later, lower scores never hurt
-       a team. Equal best scores share a rank. <a href="{{ url_for('rules_page') }}">See the full rules</a></p>
-</section>
-
-<script src="{{ url_for('static', filename='live.js') }}"></script>
+    <div class="overflow-auto">
+        <table class="striped">
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Team</th>
+                    <th>Best score</th>
+                    <th>Total</th>
+                    <th>Matches</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for team in teams %}
+                <tr>
+                    <td>{{ team.rank }}</td>
+                    <td>{{ team.name }}</td>
+                    <td><strong>{{ team.best }}</strong></td>
+                    <td>{{ team.total }}</td>
+                    <td>{{ team.matches }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endif %}
 {% endblock %}

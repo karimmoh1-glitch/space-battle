@@ -1,48 +1,38 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{% block title %}Space Battle Mission Control{% endblock %}</title>
-    <meta name="description" content="Live standings and match reports for the Space Battle tournament.">
+    <title>{% block title %}{% endblock %} | Space Battle</title>
+    <!-- Pico CSS does all the styling: https://picocss.com -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2.1.1/css/pico.cyan.min.css">
     {% block head %}{% endblock %}
-    <link rel="icon" href="{{ url_for('static', filename='emblem.svg') }}">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
-<body{% block body_class %}{% endblock %}>
-    <div class="sky" aria-hidden="true"></div>
-    {% block page %}
-    <a class="skip-link" href="#main">Skip to content</a>
-    <header class="site-header">
-        <div class="container header-row">
-            <a class="logo" href="{{ url_for('home') }}">
-                <img src="{{ url_for('static', filename='emblem.svg') }}" alt="">
-                <span class="logo-text">Space Battle <span>Mission Control</span></span>
-            </a>
-            <nav aria-label="Main">
-                <ul>
-                    <li><a href="{{ url_for('home') }}" {% if page == 'home' %}aria-current="page"{% endif %}>Leaderboard</a></li>
-                    <li><a href="{{ url_for('display') }}">Projector</a></li>
-                    <li><a href="{{ url_for('rules_page') }}" {% if page == 'rules' %}aria-current="page"{% endif %}>Rules</a></li>
-                    <li><a href="{{ url_for('api_guide') }}" {% if page == 'api' %}aria-current="page"{% endif %}>API</a></li>
-                    <li><a href="{{ url_for('about') }}" {% if page == 'about' %}aria-current="page"{% endif %}>About</a></li>
-                </ul>
-            </nav>
-        </div>
+<body>
+    <header class="container">
+        <nav>
+            <ul>
+                <li><strong>🚀 Space Battle</strong></li>
+            </ul>
+            <ul>
+                <li><a href="/">Leaderboard</a></li>
+                <li><a href="/rules">Rules</a></li>
+                <li><a href="/api-guide">API</a></li>
+                <li><a href="/about">About</a></li>
+            </ul>
+        </nav>
     </header>
-    {% include "_demo_banner.html" %}
-    <main id="main" class="container {% block main_class %}{% endblock %}">
+
+    <main class="container">
+        {% for message in get_flashed_messages() %}
+            <article>{{ message }}</article>
+        {% endfor %}
+
         {% block content %}{% endblock %}
     </main>
-    <footer>
-        <div class="container footer-row">
-            <p>TSA@RHS Webmaster qualifier entry</p>
-            <p><a href="{{ url_for('about') }}">Credits and citations</a></p>
-        </div>
+
+    <footer class="container">
+        <small>Space Battle Tournament · TSA@RHS Webmaster 2026</small>
     </footer>
-    {% endblock %}
 </body>
 </html>

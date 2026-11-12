@@ -1,60 +1,45 @@
 {% extends "base.html" %}
-{% block title %}API guide | Space Battle{% endblock %}
-{% block content %}
-<div class="reading">
-    <h1>Report a match</h1>
-    <p class="lead">Send each match result to one address. It appears on the board within seconds.</p>
+{% block title %}API{% endblock %}
 
-    <section class="section">
-        <h2>Submit a result</h2>
-        <p><code>POST /api/results</code></p>
-        <div class="scroll" role="region" aria-label="Request fields" tabindex="0">
-            <table style="min-width: 620px">
-                <thead><tr><th scope="col">Field</th><th scope="col">Type</th><th scope="col">Required</th><th scope="col">Meaning</th></tr></thead>
-                <tbody>
-                    <tr><td><code>name</code></td><td>text</td><td>Yes</td><td class="dim">Team name, 1 to 40 characters.</td></tr>
-                    <tr><td><code>score</code></td><td>integer</td><td>Yes</td><td class="dim">Signed whole number. Usually -100 to 500, but no range is enforced.</td></tr>
-                    <tr><td><code>submissionId</code></td><td>text</td><td>No</td><td class="dim">Your own ID for this match. Makes retries safe.</td></tr>
-                </tbody>
-            </table>
-        </div>
-        <pre tabindex="0"><code>curl -X POST {{ request.url_root }}api/results \
+{% block content %}
+<h1>API Guide</h1>
+<p>The match system sends each result to the leaderboard with a <code>POST</code> request.</p>
+
+<h2>Send a result</h2>
+<p><code>POST /api/results</code> with a JSON body:</p>
+<pre><code>{
+  "name": "Nova Squad",
+  "score": 250
+}</code></pre>
+
+<table>
+    <thead>
+        <tr><th>Field</th><th>Rules</th></tr>
+    </thead>
+    <tbody>
+        <tr><td><code>name</code></td><td>Required. Text, 1 to 40 characters.</td></tr>
+        <tr><td><code>score</code></td><td>Required. A whole number. Can be negative.</td></tr>
+    </tbody>
+</table>
+
+<h3>Example with curl</h3>
+<pre><code>curl -X POST {{ request.host_url }}api/results \
   -H "Content-Type: application/json" \
   -d '{"name": "Nova Squad", "score": 250}'</code></pre>
-    </section>
 
-    <section class="section">
-        <h2>Responses</h2>
-        <div class="scroll" role="region" aria-label="Status codes" tabindex="0">
-            <table style="min-width: 520px">
-                <thead><tr><th scope="col">Status</th><th scope="col">Meaning</th></tr></thead>
-                <tbody>
-                    <tr><td><code>201</code></td><td class="dim">Result saved.</td></tr>
-                    <tr><td><code>200</code></td><td class="dim">Same submissionId, name and score as before. Nothing was added.</td></tr>
-                    <tr><td><code>400</code></td><td class="dim">Invalid JSON or fields. The error explains what to fix.</td></tr>
-                    <tr><td><code>409</code></td><td class="dim">submissionId already used with a different name or score.</td></tr>
-                    <tr><td><code>413</code></td><td class="dim">Request is larger than 10 KB.</td></tr>
-                    <tr><td><code>503</code></td><td class="dim">The database is unavailable. Safe to retry.</td></tr>
-                </tbody>
-            </table>
-        </div>
-        <pre tabindex="0"><code>{
-  "ok": true,
-  "duplicate": false,
-  "result": { "id": 12, "name": "Nova Squad", "score": 250, "createdAt": "2026-11-14T15:04:05.000+00:00" }
-}</code></pre>
-    </section>
+<h3>Responses</h3>
+<table>
+    <thead>
+        <tr><th>Status</th><th>Meaning</th></tr>
+    </thead>
+    <tbody>
+        <tr><td>201</td><td>Saved.</td></tr>
+        <tr><td>400</td><td>Something is wrong with the request. The <code>error</code> field says what.</td></tr>
+        <tr><td>413</td><td>The request is bigger than 10 KB.</td></tr>
+        <tr><td>503</td><td>The database is down. Try again.</td></tr>
+    </tbody>
+</table>
 
-    <section class="section callout">
-        <h2>Repeated requests</h2>
-        <p>Two matches can have the same score, so identical requests count as separate matches.
-           If your system might retry after a network error, include a submissionId. A repeat with
-           that ID is recorded only once, even when both copies arrive at the same moment.</p>
-    </section>
-
-    <section class="section">
-        <h2>Read the standings</h2>
-        <p><code>GET /api/leaderboard</code> returns teams, the 10 most recent matches, and statistics as JSON.</p>
-    </section>
-</div>
+<h2>Get the leaderboard</h2>
+<p><code>GET /api/leaderboard</code> returns every team as JSON, best first.</p>
 {% endblock %}

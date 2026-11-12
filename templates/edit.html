@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Edit result{% endblock %}
+
+{% block content %}
+<article>
+    <h1>Edit result #{{ result.id }}</h1>
+    <form method="post">
+        <label>
+            Team name
+            <input name="name" value="{{ result.name }}" required>
+        </label>
+        <label>
+            Score
+            <input name="score" type="number" value="{{ result.score }}" required>
+        </label>
+        <button type="submit">Save</button>
+        <a href="/ops/{{ path }}" role="button" class="secondary">Cancel</a>
+    </form>
+</article>
+{% endblock %}

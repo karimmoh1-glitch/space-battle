@@ -1,113 +1,61 @@
 {% extends "base.html" %}
-{% block title %}Coordinator | Space Battle{% endblock %}
-{% block head %}<meta name="robots" content="noindex, nofollow">{% endblock %}
-{% block page %}
-{% include "_demo_banner.html" %}
-<main id="main" class="container stack">
-    <div class="admin-top">
-        <h1 style="font-size: 2rem">Coordinator console</h1>
-        <div class="button-row">
-            <a class="button" href="{{ url_for('admin_backup', slug=slug) }}">Download backup</a>
-            <form method="post" action="{{ url_for('admin_logout', slug=slug) }}"><button class="button" type="submit">Sign out</button></form>
-        </div>
+{% block title %}Admin{% endblock %}
+
+{% block content %}
+<h1>Admin panel</h1>
+
+<form method="post" action="/ops/{{ path }}/logout">
+    <button type="submit" class="outline secondary" style="width: auto">Log out</button>
+</form>
+
+<h2>Add a result</h2>
+<form method="post" action="/ops/{{ path }}/add">
+    <div class="grid">
+        <input name="name" placeholder="Team name" aria-label="Team name" required>
+        <input name="score" type="number" placeholder="Score" aria-label="Score" required>
+        <button type="submit">Add</button>
     </div>
+</form>
 
-    <div role="status">
-        {% for category, text in get_flashed_messages(with_categories=true) %}
-        <p class="flash flash-{{ category }}">{{ text }}</p>
-        {% endfor %}
+<h2>All results ({{ results|length }})</h2>
+{% if results|length == 0 %}
+    <p>No results yet.</p>
+{% else %}
+    <div class="overflow-auto">
+        <table class="striped">
+            <thead>
+                <tr><th>#</th><th>Team</th><th>Score</th><th>Time (UTC)</th><th></th><th></th></tr>
+            </thead>
+            <tbody>
+                {% for result in results %}
+                <tr>
+                    <td>{{ result.id }}</td>
+                    <td>{{ result.name }}</td>
+                    <td>{{ result.score }}</td>
+                    <td>{{ result.created_at }}</td>
+                    <td><a href="/ops/{{ path }}/edit/{{ result.id }}">Edit</a></td>
+                    <td>
+                        <form method="post" action="/ops/{{ path }}/delete/{{ result.id }}"
+                              onsubmit="return confirm('Delete this result?')">
+                            <button type="submit" class="outline secondary">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
+{% endif %}
 
-    <dl class="panel admin-stats">
-        <div><dt class="label">Teams</dt><dd>{{ stats.teams | commas }}</dd></div>
-        <div><dt class="label">Matches</dt><dd>{{ stats.matches | commas }}</dd></div>
-        <div><dt class="label">Top score</dt><dd>{{ stats.top_score | commas }}</dd></div>
-        <div><dt class="label">Leader</dt><dd title="{{ leader }}">{{ leader }}</dd></div>
-    </dl>
-
-    <section class="panel padded">
-        <h2>Enter a score</h2>
-        <form class="entry-form" method="post" action="{{ url_for('admin_add', slug=slug) }}">
-            <div><label for="new-name">Team name</label><input id="new-name" name="name" type="text" maxlength="40" required></div>
-            <div><label for="new-score">Score</label><input id="new-score" name="score" type="text" inputmode="numeric" required></div>
-            <button class="button button-primary" type="submit">Add result</button>
-        </form>
-    </section>
-
-    <section class="panel" aria-labelledby="results-title">
-        <div class="results-head">
-            <h2 id="results-title">Results <span class="number dim">({{ total | commas }})</span></h2>
-            <form class="search-form" method="get" action="{{ url_for('admin_panel', slug=slug) }}">
-                <div><label for="q">Search teams</label><input id="q" name="q" type="search" value="{{ search_text }}"></div>
-                <label class="checkbox"><input type="checkbox" name="corrected" {% if corrected_only %}checked{% endif %}> Corrected only</label>
-                <button class="button" type="submit">Filter</button>
-            </form>
+<article>
+    <h2>Reset tournament</h2>
+    <p>This deletes <strong>every</strong> result and can't be undone. Type RESET to confirm.</p>
+    <form method="post" action="/ops/{{ path }}/reset"
+          onsubmit="return confirm('Delete every result?')">
+        <div class="grid">
+            <input name="confirm" placeholder="Type RESET" aria-label="Type RESET to confirm" required>
+            <button type="submit" class="contrast">Reset</button>
         </div>
-
-        {% if rows | length == 0 %}
-        <p class="padded dim">No results to show.</p>
-        {% else %}
-        <div class="scroll" role="region" aria-label="Results table" tabindex="0">
-            <table class="results-table">
-                <thead>
-                    <tr><th scope="col">ID</th><th scope="col">Team</th><th class="right" scope="col">Score</th><th scope="col">Received</th><th scope="col">Correction</th><th class="right" scope="col">Actions</th></tr>
-                </thead>
-                <tbody>
-                    {% for row in rows %}
-                    {% if row.id == edit_id %}
-                    <tr>
-                        <td class="number dim">{{ row.id }}</td>
-                        <td><input form="edit-form" name="name" type="text" maxlength="40" value="{{ row.name }}" aria-label="Team name"></td>
-                        <td><input form="edit-form" name="score" type="text" inputmode="numeric" value="{{ row.score }}" aria-label="Score"></td>
-                        <td colspan="2" class="dim">Editing</td>
-                        <td class="right">
-                            <form id="edit-form" class="button-row" style="justify-content: flex-end" method="post" action="{{ url_for('admin_edit', slug=slug, result_id=row.id) }}">
-                                <button class="button button-primary" type="submit">Save</button>
-                                <a class="button" href="{{ url_for('admin_panel', slug=slug, q=search_text, page=page) }}">Cancel</a>
-                            </form>
-                        </td>
-                    </tr>
-                    {% else %}
-                    <tr>
-                        <td class="number dim">{{ row.id }}</td>
-                        <td>{{ row.name }}</td>
-                        <td class="number right">{{ row.score | commas }}</td>
-                        <td class="dim">{{ time_ago(row.created_at) }}</td>
-                        <td class="dim">{% if row.original_score is not none %}Was {{ row.original_score | commas }}{% else %}None{% endif %}</td>
-                        <td>
-                            <div class="button-row" style="justify-content: flex-end">
-                                <a class="button" href="{{ url_for('admin_panel', slug=slug, q=search_text, page=page, edit=row.id) }}" aria-label="Edit result {{ row.id }}">Edit</a>
-                                <form method="post" action="{{ url_for('admin_delete', slug=slug, result_id=row.id) }}"
-                                      onsubmit="return confirm('Delete result {{ row.id }}? This cannot be undone.')">
-                                    <button class="button button-danger" type="submit" aria-label="Delete result {{ row.id }}">Delete</button>
-                                </form>
-                            </div>
-                        </td>
-                    </tr>
-                    {% endif %}
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-        {% endif %}
-
-        {% if last_page > 1 %}
-        <nav class="pager" aria-label="Results pages">
-            {% if page > 1 %}<a class="button" href="{{ url_for('admin_panel', slug=slug, q=search_text, corrected='on' if corrected_only else none, page=page - 1) }}">Previous</a>{% endif %}
-            <span class="number dim">Page {{ page }} of {{ last_page }}</span>
-            {% if page < last_page %}<a class="button" href="{{ url_for('admin_panel', slug=slug, q=search_text, corrected='on' if corrected_only else none, page=page + 1) }}">Next</a>{% endif %}
-        </nav>
-        {% endif %}
-    </section>
-
-    <details class="danger-zone">
-        <summary>Reset tournament</summary>
-        <p class="dim">Reset deletes every result permanently. Download a backup first.</p>
-        <form method="post" action="{{ url_for('admin_reset', slug=slug) }}" style="max-width: 420px; margin-top: 12px">
-            <label for="confirm">Type {{ reset_phrase }} to confirm</label>
-            <input id="confirm" name="confirm" type="text" autocomplete="off" required>
-            <button class="button button-danger" type="submit" style="margin-top: 12px">Delete everything</button>
-        </form>
-    </details>
-</main>
+    </form>
+</article>
 {% endblock %}

@@ -1,80 +1,57 @@
 # How It Works
 
-## The big picture
-
 ```
-Match system -> POST /api/results -> check the data -> save to SQLite
-Browser, every 3 seconds -> /live/board -> Python rebuilds the HTML -> page updates
-Coordinator -> /ops/secret -> password -> forms that change the database
+Match system  --POST /api/results-->  app.py  --> rules.py checks it --> database.py saves it
+Browser       --GET /-->              app.py  --> rules.py ranks the teams --> index.html
 ```
 
-The browser never talks to the database. Only Python does.
+## Saving a score
 
-## Python files
+`add_result()` in `app.py`:
 
-**`rules.py`** has no web or database code, only functions. That makes it the best place to start.
+1. Reads the JSON.
+2. Asks `rules.check_result()` if it's OK. If not, sends back `400` and the error.
+3. Saves it with `database.add_result()`.
+4. Sends back `201`.
 
-- `check_submission` returns a pair: `(cleaned data, None)` if good, `(None, error message)` if bad.
-- `build_teams` loops through every match and builds a dictionary with one entry per team.
-- `rank_teams` sorts the teams, then walks the list. If a team has the same best score as the team before it, it copies that rank. Otherwise its rank is its position. That one `if` is what makes 1, 1, 3.
+## Ranking
 
-**`database.py`** holds all SQL. The `?` marks let the database insert values safely, so text someone types can never run as SQL.
+`get_standings()` in `rules.py` loops over every result and builds a dictionary with one
+entry per team (using the lowercase name, so "NOVA" and "Nova" are the same team). Then it
+sorts the teams by best score. In the last loop, if a team has the same best score as the
+team before it, it gets the same rank. That's how ranks go 1, 2, 2, 4.
 
-It works with two databases. On your computer it uses SQLite, a single file. On Vercel, files are erased between requests, so the live site uses Postgres, a database server. If the `DATABASE_URL` setting exists, `connect()` opens Postgres; otherwise it opens the file. The two speak almost the same SQL. The `run` function swaps `?` for `%s`, the blank Postgres expects, and `search_results` picks `strpos` or `instr`.
+Totals are never saved. They're added up every time the page loads. So if two scores
+arrive at the same moment, they're just two new rows, and neither one can overwrite the other.
 
-**`app.py`** connects web addresses to functions. `@app.route("/rules")` means "when someone visits /rules, run the function below."
+## The database
 
-## How a score gets saved
+`database.py` has all the SQL. The `?` marks are blanks the database fills in safely, so
+nobody can sneak SQL in through a team name.
 
-Follow `submit_result` in `app.py`:
+On my computer it uses SQLite, which is one file. Vercel erases files, so the live site uses
+Postgres. The SQL is the same except Postgres wants `%s` instead of `?`, so `run()` swaps them.
 
-1. Read the JSON. If it is broken, answer 400.
-2. Call `rules.check_submission`. If it fails, answer 400 with the reason.
-3. Call `database.add_result`.
-4. Answer 201.
+## Live updates
 
-## Why simultaneous requests are safe
+`index.html` has `<meta http-equiv="refresh" content="5">`, which makes the browser reload
+the page every 5 seconds.
 
-Each match is its own row, and totals are calculated when the board is read. Because no total is ever saved, two requests can never overwrite each other's update.
+## Admin page
 
-`submission_id` is marked `UNIQUE`, so the database itself refuses a second copy, even if both arrive in the same instant. `add_result` catches that refusal and returns `None`.
-
-## How the board updates by itself
-
-1. `index.html` is mostly an empty box with `id="live-board"`.
-2. `live.js` asks `/live/board` for the newest HTML and puts it in the box.
-3. It waits 3 seconds and does it again.
-
-Python and the Jinja template `_board.html` do the real work. JavaScript only moves the finished HTML onto the page. HTML, CSS, and Python cannot update an open page by themselves, so this is the one job JavaScript does here.
+The address is secret (`ADMIN_PATH`), but a secret address isn't real security. The password
+is. When you log in, Flask remembers it in `session`, which is a signed cookie. Every admin
+route checks `logged_in()` first. Delete and reset ask "are you sure?", and reset only works
+if you type RESET.
 
 ## Templates
 
-Templates are HTML with `{% for %}` loops, `{% if %}` checks, and `{{ variable }}` blanks that Flask fills in. `base.html` holds what every page shares. Other pages start with `{% extends "base.html" %}` and fill in the content block. Filenames starting with `_` are pieces included in other pages.
+Templates are HTML with `{% for %}` loops and `{{ blanks }}` that Flask fills in. Every
+page starts with `{% extends "base.html" %}`, which has the menu and Pico CSS. Flask
+escapes team names, so a team called `<script>` shows up as text and doesn't run.
 
-Jinja automatically makes text safe, so a team named `<script>` shows as text and does not run.
+## Practice ideas
 
-## Orbit map
-
-`orbit_map` in `rules.py` is trigonometry you already know. Each team gets a radius from its rank and an angle from its position. Then `x = center + cos(angle) * radius` and `y = center + sin(angle) * radius`.
-
-## The admin panel
-
-The address is hidden, but hiding is not security. The password check on the server is. After you log in, Flask remembers it in a signed cookie through `session`. Every admin function checks `is_logged_in()` first.
-
-## Practice
-
-Try each of these without looking at the answer first.
-
-1. Change ranking to use each team's total instead of its best. Which tests fail, and why?
-2. Add a "matches played" number to the projector view.
-3. Add a new rule that rejects team names containing only numbers. Write a test first.
-4. Add a page that shows one team's match history.
-5. Write the `rank_teams` function again from memory, then run `tests/test_rules.py`.
-
-## Questions to be able to answer
-
-1. Why is the database key never sent to the browser?
-2. What happens when two requests use the same `submissionId` at once?
-3. How do two teams tied at 410 get ranks, and what rank comes next?
-4. What does the hidden address protect, and what does the password protect?
-5. Why does the live site need Postgres instead of the SQLite file?
+1. Rank teams by total score instead of best score. Which tests break?
+2. Add a page that shows one team's match history.
+3. Show the time of each team's last match on the leaderboard.
