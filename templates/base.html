@@ -1,38 +1,75 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
-<head>
+<!-- Page layout from the Pico CSS v2 "Preview" example (MIT license):
+     https://github.com/picocss/examples/blob/master/v2-html/index.html -->
+<html lang="en">
+  <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{% block title %}{% endblock %} | Space Battle</title>
-    <!-- Pico CSS does all the styling: https://picocss.com -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2.1.1/css/pico.cyan.min.css">
+    <meta name="color-scheme" content="light dark">
+    <title>{% block title %}{% endblock %} • Space Battle</title>
+    <meta name="description" content="Live leaderboard for the Space Battle tournament.">
+
+    <!-- Pico.css -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@picocss/pico@2.1.1/css/pico.min.css"
+    >
     {% block head %}{% endblock %}
-</head>
-<body>
+  </head>
+
+  <body>
+    <!-- Header -->
     <header class="container">
-        <nav>
-            <ul>
-                <li><strong>🚀 Space Battle</strong></li>
-            </ul>
-            <ul>
-                <li><a href="/">Leaderboard</a></li>
-                <li><a href="/rules">Rules</a></li>
-                <li><a href="/api-guide">API</a></li>
-                <li><a href="/about">About</a></li>
-            </ul>
-        </nav>
+      <hgroup>
+        <h1>🚀 Space Battle</h1>
+        <p>Live tournament leaderboard.</p>
+      </hgroup>
+      <nav>
+        <ul>
+          <li><a href="/">Leaderboard</a></li>
+          <li><a href="/rules">Rules</a></li>
+          <li><a href="/api-guide">API</a></li>
+          <li><a href="/about">About</a></li>
+          <li>
+            <details class="dropdown">
+              <summary role="button" class="secondary">Theme</summary>
+              <ul>
+                <li><a href="#" data-theme-switcher="auto">Auto</a></li>
+                <li><a href="#" data-theme-switcher="light">Light</a></li>
+                <li><a href="#" data-theme-switcher="dark">Dark</a></li>
+              </ul>
+            </details>
+          </li>
+        </ul>
+      </nav>
     </header>
+    <!-- ./ Header -->
 
+    <!-- Main -->
     <main class="container">
-        {% for message in get_flashed_messages() %}
-            <article>{{ message }}</article>
-        {% endfor %}
+      {% for message in get_flashed_messages() %}
+      <article>{{ message }}</article>
+      {% endfor %}
 
-        {% block content %}{% endblock %}
+      {% block content %}{% endblock %}
     </main>
+    <!-- ./ Main -->
 
+    <!-- Footer -->
     <footer class="container">
-        <small>Space Battle Tournament · TSA@RHS Webmaster 2026</small>
+      <small
+        >Built with <a href="https://picocss.com">Pico</a> •
+        <a href="https://github.com/karimmoh1-glitch/space-battle"
+          >Source code</a
+        ></small
+      >
     </footer>
-</body>
+    <!-- ./ Footer -->
+
+    {% block dialogs %}{% endblock %}
+
+    <!-- Minimal theme switcher -->
+    <script src="/static/js/minimal-theme-switcher.js"></script>
+    {% block scripts %}{% endblock %}
+  </body>
 </html>

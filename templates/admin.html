@@ -2,60 +2,126 @@
 {% block title %}Admin{% endblock %}
 
 {% block content %}
-<h1>Admin panel</h1>
+      <!-- Preview -->
+      <section id="preview">
+        <h2>Add a result</h2>
+        <p>
+          Use this if a match result didn't come in through the API.
+        </p>
+        <form method="post" action="/ops/{{ path }}/add">
+          <div class="grid">
+            <input
+              type="text"
+              name="name"
+              placeholder="Team name"
+              aria-label="Team name"
+              required
+            >
+            <input
+              type="number"
+              name="score"
+              placeholder="Score"
+              aria-label="Score"
+              required
+            >
+            <button type="submit">Add</button>
+          </div>
+        </form>
+      </section>
+      <!-- ./ Preview -->
 
-<form method="post" action="/ops/{{ path }}/logout">
-    <button type="submit" class="outline secondary" style="width: auto">Log out</button>
-</form>
-
-<h2>Add a result</h2>
-<form method="post" action="/ops/{{ path }}/add">
-    <div class="grid">
-        <input name="name" placeholder="Team name" aria-label="Team name" required>
-        <input name="score" type="number" placeholder="Score" aria-label="Score" required>
-        <button type="submit">Add</button>
-    </div>
-</form>
-
-<h2>All results ({{ results|length }})</h2>
-{% if results|length == 0 %}
-    <p>No results yet.</p>
-{% else %}
-    <div class="overflow-auto">
-        <table class="striped">
+      <!-- Tables -->
+      <section id="tables">
+        <h2>All results ({{ results|length }})</h2>
+        {% if results|length == 0 %}
+        <p>No results yet.</p>
+        {% else %}
+        <div class="overflow-auto">
+          <table class="striped">
             <thead>
-                <tr><th>#</th><th>Team</th><th>Score</th><th>Time (UTC)</th><th></th><th></th></tr>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Team</th>
+                <th scope="col">Score</th>
+                <th scope="col">Time (UTC)</th>
+                <th scope="col">Edit</th>
+                <th scope="col">Delete</th>
+              </tr>
             </thead>
             <tbody>
-                {% for result in results %}
-                <tr>
-                    <td>{{ result.id }}</td>
-                    <td>{{ result.name }}</td>
-                    <td>{{ result.score }}</td>
-                    <td>{{ result.created_at }}</td>
-                    <td><a href="/ops/{{ path }}/edit/{{ result.id }}">Edit</a></td>
-                    <td>
-                        <form method="post" action="/ops/{{ path }}/delete/{{ result.id }}"
-                              onsubmit="return confirm('Delete this result?')">
-                            <button type="submit" class="outline secondary">Delete</button>
-                        </form>
-                    </td>
-                </tr>
-                {% endfor %}
+              {% for result in results %}
+              <tr>
+                <th scope="row">{{ result.id }}</th>
+                <td>{{ result.name }}</td>
+                <td>{{ result.score }}</td>
+                <td>{{ result.created_at }}</td>
+                <td><a href="/ops/{{ path }}/edit/{{ result.id }}">Edit</a></td>
+                <td>
+                  <form method="post" action="/ops/{{ path }}/delete/{{ result.id }}"
+                        onsubmit="return confirm('Delete this result?')">
+                    <button type="submit" class="outline secondary">Delete</button>
+                  </form>
+                </td>
+              </tr>
+              {% endfor %}
             </tbody>
-        </table>
-    </div>
-{% endif %}
-
-<article>
-    <h2>Reset tournament</h2>
-    <p>This deletes <strong>every</strong> result and can't be undone. Type RESET to confirm.</p>
-    <form method="post" action="/ops/{{ path }}/reset"
-          onsubmit="return confirm('Delete every result?')">
-        <div class="grid">
-            <input name="confirm" placeholder="Type RESET" aria-label="Type RESET to confirm" required>
-            <button type="submit" class="contrast">Reset</button>
+          </table>
         </div>
-    </form>
-</article>
+        {% endif %}
+      </section>
+      <!-- ./ Tables -->
+
+      <!-- Buttons-->
+      <section id="buttons">
+        <h2>Tournament</h2>
+        <p class="grid">
+          <button class="contrast" data-target="modal-reset" onclick="toggleModal(event)">
+            Reset tournament
+          </button>
+          <button class="outline secondary" type="submit" form="logout-form">Log out</button>
+        </p>
+        <form id="logout-form" method="post" action="/ops/{{ path }}/logout"></form>
+      </section>
+      <!-- ./ Buttons -->
+{% endblock %}
+
+{% block dialogs %}
+    <!-- Modal example -->
+    <dialog id="modal-reset">
+      <article>
+        <header>
+          <button
+            aria-label="Close"
+            rel="prev"
+            data-target="modal-reset"
+            onclick="toggleModal(event)"
+          ></button>
+          <h3>Confirm your action!</h3>
+        </header>
+        <p>
+          This deletes <strong>every</strong> result and can't be undone. Type RESET to confirm.
+        </p>
+        <form id="reset-form" method="post" action="/ops/{{ path }}/reset">
+          <input name="confirm" placeholder="Type RESET" aria-label="Type RESET to confirm" required>
+        </form>
+        <footer>
+          <button
+            role="button"
+            class="secondary"
+            data-target="modal-reset"
+            onclick="toggleModal(event)"
+          >
+            Cancel</button
+          ><button type="submit" form="reset-form">
+            Confirm
+          </button>
+        </footer>
+      </article>
+    </dialog>
+    <!-- ./ Modal example -->
+{% endblock %}
+
+{% block scripts %}
+    <!-- Modal -->
+    <script src="/static/js/modal.js"></script>
 {% endblock %}

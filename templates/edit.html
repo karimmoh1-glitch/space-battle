@@ -2,19 +2,24 @@
 {% block title %}Edit result{% endblock %}
 
 {% block content %}
-<article>
-    <h1>Edit result #{{ result.id }}</h1>
-    <form method="post">
-        <label>
-            Team name
-            <input name="name" value="{{ result.name }}" required>
-        </label>
-        <label>
-            Score
-            <input name="score" type="number" value="{{ result.score }}" required>
-        </label>
-        <button type="submit">Save</button>
-        <a href="/ops/{{ path }}" role="button" class="secondary">Cancel</a>
-    </form>
-</article>
+      <!-- Form elements-->
+      <section id="form">
+        <form method="post">
+          <h2>Edit result #{{ result.id }}</h2>
+
+          <!-- Text -->
+          <label for="name">Team name</label>
+          <input type="text" id="name" name="name" value="{{ result.name }}" required>
+
+          <!-- Text -->
+          <label for="score">Score</label>
+          <input type="number" id="score" name="score" value="{{ result.score }}" required>
+          <small>Whole numbers only. Can be negative.</small>
+
+          <!-- Buttons -->
+          <a href="/ops/{{ path }}" role="button" class="secondary">Cancel</a>
+          <input type="submit" value="Save">
+        </form>
+      </section>
+      <!-- ./ Form elements-->
 {% endblock %}

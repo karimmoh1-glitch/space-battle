@@ -2,44 +2,83 @@
 {% block title %}API{% endblock %}
 
 {% block content %}
-<h1>API Guide</h1>
-<p>The match system sends each result to the leaderboard with a <code>POST</code> request.</p>
-
-<h2>Send a result</h2>
-<p><code>POST /api/results</code> with a JSON body:</p>
-<pre><code>{
+      <!-- Typography-->
+      <section id="typography">
+        <h2>API Guide</h2>
+        <p>
+          The match system sends each result to the leaderboard with a <code>POST</code> request to
+          <code>/api/results</code>, with a JSON body:
+        </p>
+        <pre><code>{
   "name": "Nova Squad",
   "score": 250
 }</code></pre>
 
-<table>
-    <thead>
-        <tr><th>Field</th><th>Rules</th></tr>
-    </thead>
-    <tbody>
-        <tr><td><code>name</code></td><td>Required. Text, 1 to 40 characters.</td></tr>
-        <tr><td><code>score</code></td><td>Required. A whole number. Can be negative.</td></tr>
-    </tbody>
-</table>
-
-<h3>Example with curl</h3>
-<pre><code>curl -X POST {{ request.host_url }}api/results \
+        <h3>Example with curl</h3>
+        <pre><code>curl -X POST {{ request.host_url }}api/results \
   -H "Content-Type: application/json" \
   -d '{"name": "Nova Squad", "score": 250}'</code></pre>
 
-<h3>Responses</h3>
-<table>
-    <thead>
-        <tr><th>Status</th><th>Meaning</th></tr>
-    </thead>
-    <tbody>
-        <tr><td>201</td><td>Saved.</td></tr>
-        <tr><td>400</td><td>Something is wrong with the request. The <code>error</code> field says what.</td></tr>
-        <tr><td>413</td><td>The request is bigger than 10 KB.</td></tr>
-        <tr><td>503</td><td>The database is down. Try again.</td></tr>
-    </tbody>
-</table>
+        <h3>Get the leaderboard</h3>
+        <p>
+          <code>GET /api/leaderboard</code> returns every team as JSON, best first.
+        </p>
+      </section>
+      <!-- ./ Typography-->
 
-<h2>Get the leaderboard</h2>
-<p><code>GET /api/leaderboard</code> returns every team as JSON, best first.</p>
+      <!-- Tables -->
+      <section id="tables">
+        <h2>Fields</h2>
+        <div class="overflow-auto">
+          <table class="striped">
+            <thead>
+              <tr>
+                <th scope="col">Field</th>
+                <th scope="col">Rules</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row"><code>name</code></th>
+                <td>Required. Text, 1 to 40 characters.</td>
+              </tr>
+              <tr>
+                <th scope="row"><code>score</code></th>
+                <td>Required. A whole number. Can be negative.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h2>Responses</h2>
+        <div class="overflow-auto">
+          <table class="striped">
+            <thead>
+              <tr>
+                <th scope="col">Status</th>
+                <th scope="col">Meaning</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">201</th>
+                <td>Saved.</td>
+              </tr>
+              <tr>
+                <th scope="row">400</th>
+                <td>Something is wrong with the request. The <code>error</code> field says what.</td>
+              </tr>
+              <tr>
+                <th scope="row">413</th>
+                <td>The request is bigger than 10 KB.</td>
+              </tr>
+              <tr>
+                <th scope="row">503</th>
+                <td>The database is down. Try again.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+      <!-- ./ Tables -->
 {% endblock %}

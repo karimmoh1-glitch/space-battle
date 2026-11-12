@@ -7,53 +7,71 @@
 {% endblock %}
 
 {% block content %}
-<hgroup>
-    <h1>Leaderboard</h1>
-    <p>{{ teams|length }} teams · {{ match_count }} matches · updates every 5 seconds</p>
-</hgroup>
+      <!-- Preview -->
+      <section id="preview">
+        <h2>Leaderboard</h2>
+        <p>
+          {{ teams|length }} teams • {{ match_count }} matches • updates every 5 seconds
+        </p>
+      </section>
+      <!-- ./ Preview -->
 
-{% if teams|length == 0 %}
-    <article>
-        <h3>No scores yet</h3>
-        <p>The board fills in as soon as the first match is sent in.</p>
-    </article>
-{% else %}
-    <div class="grid">
+      {% if teams|length == 0 %}
+      <!-- Article-->
+      <article id="article">
+        <h2>No scores yet</h2>
+        <p>
+          The board fills in as soon as the first match is sent in.
+        </p>
+      </article>
+      <!-- ./ Article-->
+      {% else %}
+      <!-- Top three -->
+      <div class="grid">
         {% for team in teams[:3] %}
-            <article>
-                <header>
-                    {% if team.rank == 1 %}🥇{% elif team.rank == 2 %}🥈{% else %}🥉{% endif %}
-                    Rank {{ team.rank }}
-                </header>
-                <h3>{{ team.name }}</h3>
-                <p>Best score: <strong>{{ team.best }}</strong></p>
-            </article>
+        <!-- Article-->
+        <article>
+          <h2>{{ team.name }}</h2>
+          <p>
+            Best score: <strong>{{ team.best }}</strong>
+          </p>
+          <footer>
+            <small>{% if team.rank == 1 %}🥇{% elif team.rank == 2 %}🥈{% else %}🥉{% endif %} Rank {{ team.rank }}</small>
+          </footer>
+        </article>
+        <!-- ./ Article-->
         {% endfor %}
-    </div>
+      </div>
+      <!-- ./ Top three -->
 
-    <div class="overflow-auto">
-        <table class="striped">
+      <!-- Tables -->
+      <section id="tables">
+        <h2>Standings</h2>
+        <div class="overflow-auto">
+          <table class="striped">
             <thead>
-                <tr>
-                    <th>Rank</th>
-                    <th>Team</th>
-                    <th>Best score</th>
-                    <th>Total</th>
-                    <th>Matches</th>
-                </tr>
+              <tr>
+                <th scope="col">Rank</th>
+                <th scope="col">Team</th>
+                <th scope="col">Best score</th>
+                <th scope="col">Total</th>
+                <th scope="col">Matches</th>
+              </tr>
             </thead>
             <tbody>
-                {% for team in teams %}
-                <tr>
-                    <td>{{ team.rank }}</td>
-                    <td>{{ team.name }}</td>
-                    <td><strong>{{ team.best }}</strong></td>
-                    <td>{{ team.total }}</td>
-                    <td>{{ team.matches }}</td>
-                </tr>
-                {% endfor %}
+              {% for team in teams %}
+              <tr>
+                <th scope="row">{{ team.rank }}</th>
+                <td>{{ team.name }}</td>
+                <td><strong>{{ team.best }}</strong></td>
+                <td>{{ team.total }}</td>
+                <td>{{ team.matches }}</td>
+              </tr>
+              {% endfor %}
             </tbody>
-        </table>
-    </div>
-{% endif %}
+          </table>
+        </div>
+      </section>
+      <!-- ./ Tables -->
+      {% endif %}
 {% endblock %}

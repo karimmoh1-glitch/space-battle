@@ -14,6 +14,8 @@ with the organizers what AI use is allowed, and keep this notice accurate in any
 |---|---|---|---|
 | Flask 3.1.3 | Python web framework | BSD 3-Clause | https://flask.palletsprojects.com |
 | Pico CSS 2.1.1 | Page styling | MIT | https://picocss.com |
+| Pico CSS v2 "Preview" example | Page layout and markup for every template, used as the starting point and kept in the same structure | MIT | https://github.com/picocss/examples/tree/master/v2-html |
+| Pico `minimal-theme-switcher.js` and `modal.js` | Light/dark theme menu and the reset confirmation window, copied unchanged into `static/js/` | MIT | https://github.com/picocss/examples/tree/master/v2-html/js |
 | SQLite | Database on my computer | Public domain | https://sqlite.org |
 | psycopg 3.3.8 | Connects Python to Postgres | LGPL 3.0 | https://www.psycopg.org |
 

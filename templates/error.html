@@ -2,9 +2,15 @@
 {% block title %}Error{% endblock %}
 
 {% block content %}
-<article>
-    <h1>Houston, we have a problem</h1>
-    <p>{{ message }}</p>
-    <a href="/" role="button">Back to the leaderboard</a>
-</article>
+      <!-- Article-->
+      <article id="article">
+        <h2>Houston, we have a problem</h2>
+        <p>
+          {{ message }}
+        </p>
+        <footer>
+          <small><a href="/">Back to the leaderboard</a></small>
+        </footer>
+      </article>
+      <!-- ./ Article-->
 {% endblock %}

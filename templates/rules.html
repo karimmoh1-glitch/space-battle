@@ -2,32 +2,86 @@
 {% block title %}Rules{% endblock %}
 
 {% block content %}
-<h1>Rules</h1>
+      <!-- Typography-->
+      <section id="typography">
+        <h2>Rules</h2>
+        <p>
+          Each team is ranked by its <strong>best score from a single match</strong>. A bad match
+          never lowers a team's rank. The leaderboard also shows each team's total and how many
+          matches it played.
+        </p>
 
-<h2>How teams are ranked</h2>
-<p>Each team is ranked by its <strong>best score from a single match</strong>. A bad match never
-   lowers a team's rank. The leaderboard also shows each team's total and how many matches it played.</p>
+        <!-- Lists-->
+        <h3>Other rules</h3>
+        <ul>
+          <li>Scores are whole numbers and can be negative.</li>
+          <li>Capital letters and extra spaces in team names don't matter. "NOVA SQUAD" and "Nova Squad" are the same team.</li>
+          <li>Tournament staff can fix or delete a result if a mistake is made.</li>
+        </ul>
+      </section>
+      <!-- ./ Typography-->
 
-<h2>Ties</h2>
-<p>Teams with the same best score share a rank, and the next rank is skipped.</p>
+      <!-- Tables -->
+      <section id="tables">
+        <h2>Ties</h2>
+        <p>Teams with the same best score share a rank, and the next rank is skipped.</p>
+        <div class="overflow-auto">
+          <table class="striped">
+            <thead>
+              <tr>
+                <th scope="col">Rank</th>
+                <th scope="col">Team</th>
+                <th scope="col">Best score</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">1</th>
+                <td>Vega Lancers</td>
+                <td>455</td>
+              </tr>
+              <tr>
+                <th scope="row">2</th>
+                <td>Titan Forge</td>
+                <td>410</td>
+              </tr>
+              <tr>
+                <th scope="row">2</th>
+                <td>Ceres Guild</td>
+                <td>410</td>
+              </tr>
+              <tr>
+                <th scope="row">4</th>
+                <td>Europa Deep</td>
+                <td>120</td>
+              </tr>
+              <tr>
+                <th scope="row">5</th>
+                <td>Nightside Relay</td>
+                <td>-18</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+      <!-- ./ Tables -->
 
-<table>
-    <thead>
-        <tr><th>Rank</th><th>Team</th><th>Best score</th></tr>
-    </thead>
-    <tbody>
-        <tr><td>1</td><td>Vega Lancers</td><td>455</td></tr>
-        <tr><td>2</td><td>Titan Forge</td><td>410</td></tr>
-        <tr><td>2</td><td>Ceres Guild</td><td>410</td></tr>
-        <tr><td>4</td><td>Europa Deep</td><td>120</td></tr>
-        <tr><td>5</td><td>Nightside Relay</td><td>-18</td></tr>
-    </tbody>
-</table>
-
-<h2>Other rules</h2>
-<ul>
-    <li>Scores are whole numbers and can be negative.</li>
-    <li>Capital letters and extra spaces in team names don't matter. "NOVA SQUAD" and "Nova Squad" are the same team.</li>
-    <li>Tournament staff can fix or delete a result if a mistake is made.</li>
-</ul>
+      <!-- Accordions -->
+      <section id="accordions">
+        <h2>Questions</h2>
+        <details>
+          <summary>Does a bad match hurt my team?</summary>
+          <p>
+            No. Only your best single match decides your rank. Every match still counts toward your
+            total.
+          </p>
+        </details>
+        <details>
+          <summary>What if a score was entered wrong?</summary>
+          <p>
+            Tell the tournament staff. They can fix or delete any result from the admin page.
+          </p>
+        </details>
+      </section>
+      <!-- ./ Accordions -->
 {% endblock %}
