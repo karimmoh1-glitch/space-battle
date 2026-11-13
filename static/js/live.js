@@ -94,6 +94,7 @@ function showPodium(data) {
   podium.textContent = ""; // remove the old cards
 
   if (data.teams.length == 0) {
+    document.getElementById("also-tied").hidden = true;
     const card = document.createElement("article");
     card.appendChild(makeElement("h3", "Waiting for the first match…"));
     card.appendChild(makeElement("p", "Scores show up here the second they come in."));
@@ -119,6 +120,10 @@ function showPodium(data) {
     card.appendChild(makeElement("small", team.matches + " matches • best " + team.best));
     podium.appendChild(card);
   }
+
+  // Only 3 cards fit. If more teams tie for a podium spot, the server lists them.
+  document.getElementById("also-tied").hidden = data.also_tied.length == 0;
+  setText("also-tied-names", data.also_tied.join(", "));
 }
 
 function showStandings(data, justPlayed) {
@@ -146,7 +151,13 @@ function showStandings(data, justPlayed) {
     const rank = makeElement("th", team.rank);
     rank.scope = "row";
     row.appendChild(rank);
-    row.appendChild(makeElement("td", team.name));
+
+    // The team name links to that team's page.
+    const nameCell = document.createElement("td");
+    const link = makeElement("a", team.name);
+    link.href = "/team/" + encodeURIComponent(team.name);
+    nameCell.appendChild(link);
+    row.appendChild(nameCell);
     row.appendChild(makeElement("td", team.best));
     row.appendChild(makeElement("td", team.total));
     row.appendChild(makeElement("td", team.average));

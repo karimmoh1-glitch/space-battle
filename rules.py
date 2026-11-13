@@ -6,6 +6,7 @@ from datetime import datetime, timezone
 
 MAX_NAME_LENGTH = 40
 MAX_SCORE = 1000000000  # one billion, so a typo can't break the database
+MAX_MATCH_ID_LENGTH = 64
 
 # The ways the admin can choose to rank teams. "best" is the default.
 MODE_LABELS = {
@@ -39,7 +40,23 @@ def check_result(data):
     if score > MAX_SCORE or score < -MAX_SCORE:
         return "score is too big."
 
+    # match_id is optional. If it's there, it has to be text or a whole number.
+    match_id = data.get("match_id")
+    if match_id is not None:
+        if type(match_id) != str and type(match_id) != int:
+            return "match_id must be text or a whole number."
+        if len(str(match_id).strip()) == 0 or len(str(match_id)) > MAX_MATCH_ID_LENGTH:
+            return "match_id must be 1 to 64 characters."
+
     return None
+
+
+def get_match_id(data):
+    """The match_id as text, or None if the game didn't send one. 17 and "17" are the same match."""
+    match_id = data.get("match_id")
+    if match_id is None:
+        return None
+    return str(match_id).strip()
 
 
 def get_standings(results, mode="best"):
@@ -66,6 +83,9 @@ def get_standings(results, mode="best"):
     leaderboard = list(teams.values())
     for team in leaderboard:
         team["average"] = round(team["total"] / team["matches"], 1)
+        # Show 300 instead of 300.0
+        if team["average"] == int(team["average"]):
+            team["average"] = int(team["average"])
 
     # Sort by whichever number the admin picked, biggest first.
     def sort_key(team):
@@ -119,3 +139,49 @@ def recent_results(results, count, now=None):
         i = i - 1
 
     return recent
+
+
+def also_tied(teams):
+    """Only 3 teams fit on the podium. Returns the names of any other teams
+    that tied for a podium spot (rank 3 or better), so we can list them too."""
+    names = []
+    for i in range(3, len(teams)):
+        if teams[i]["rank"] <= 3:
+            names.append(teams[i]["name"])
+    return names
+
+
+def find_team(teams, name):
+    """Finds a team in the standings by name (capital letters don't matter). None if not found."""
+    for team in teams:
+        if team["name"].lower() == name.lower():
+            return team
+    return None
+
+
+def chart_points(scores, width, height):
+    """Works out where each score goes on the team page's line chart.
+    Returns the list of points and how high the zero line is."""
+    # The chart always includes 0, so you can see which scores were negative.
+    low = 0
+    high = 0
+    for score in scores:
+        if score < low:
+            low = score
+        if score > high:
+            high = score
+    if high == low:
+        high = low + 1  # avoid dividing by zero
+
+    points = []
+    for i in range(len(scores)):
+        if len(scores) == 1:
+            x = width / 2
+        else:
+            x = i * width / (len(scores) - 1)
+        # Bigger scores go higher, and SVG counts y from the top, so flip it.
+        y = height - (scores[i] - low) / (high - low) * height
+        points.append({"x": round(x, 1), "y": round(y, 1), "score": scores[i], "match": i + 1})
+
+    zero_y = round(height - (0 - low) / (high - low) * height, 1)
+    return points, zero_y

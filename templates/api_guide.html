@@ -11,13 +11,18 @@
         </p>
         <pre><code>{
   "name": "Nova Squad",
-  "score": 250
+  "score": 250,
+  "match_id": "round2-match7"
 }</code></pre>
+        <p>
+          <code>match_id</code> is optional but recommended. If the game sends the same match twice
+          (for example, it retries after a timeout), we only count it once.
+        </p>
 
         <h3>Example with curl</h3>
         <pre><code>curl -X POST {{ request.host_url }}api/results \
   -H "Content-Type: application/json" \
-  -d '{"name": "Nova Squad", "score": 250}'</code></pre>
+  -d '{"name": "Nova Squad", "score": 250, "match_id": "round2-match7"}'</code></pre>
 
         <h3>What you get back</h3>
         <pre><code>{
@@ -55,6 +60,10 @@
                 <td>Required. Text, 1 to 40 characters. Extra spaces are removed, and capital letters don't matter.</td>
               </tr>
               <tr>
+                <th scope="row"><code>match_id</code></th>
+                <td>Optional. Text or a whole number, 1 to 64 characters. <code>17</code> and <code>"17"</code> count as the same match.</td>
+              </tr>
+              <tr>
                 <th scope="row"><code>score</code></th>
                 <td>Required. A whole number (not <code>"250"</code> or <code>250.5</code>). Can be negative.</td>
               </tr>
@@ -75,6 +84,10 @@
               <tr>
                 <th scope="row">201</th>
                 <td>Saved.</td>
+              </tr>
+              <tr>
+                <th scope="row">200</th>
+                <td>Already saved. A result with this <code>match_id</code> came in before, so nothing new was saved. The response has <code>"duplicate": true</code> and the original result.</td>
               </tr>
               <tr>
                 <th scope="row">400</th>

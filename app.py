@@ -38,13 +38,15 @@ def board_data():
     if mode not in rules.MODE_LABELS:
         mode = "best"
 
+    teams = rules.get_standings(results, mode)
     return {
         "mode": mode,
         "mode_label": rules.MODE_LABELS[mode],
         "locked": settings.get("locked") == "yes",
         "announcement": settings.get("announcement", ""),
         "match_count": len(results),
-        "teams": rules.get_standings(results, mode),
+        "teams": teams,
+        "also_tied": rules.also_tied(teams),
         "recent": rules.recent_results(results, TICKER_SIZE),
     }
 
@@ -60,6 +62,24 @@ def leaderboard():
 def display():
     # The big-screen version for the projector.
     return render_template("display.html", **board_data())
+
+
+@app.route("/team/<path:name>")
+def team_page(name):
+    board = board_data()
+    team = rules.find_team(board["teams"], name)
+    if team is None:
+        abort(404)
+
+    results = database.team_results(name)
+    scores = []
+    for result in results:
+        scores.append(result["score"])
+    points, zero_y = rules.chart_points(scores, 600, 200)
+
+    results.reverse()  # newest first in the table
+    return render_template("team.html", team=team, results=results, points=points,
+                           zero_y=zero_y, mode=board["mode"], mode_label=board["mode_label"])
 
 
 @app.route("/rules")
@@ -91,7 +111,11 @@ def add_result():
     if error:
         return jsonify({"ok": False, "error": error}), 400
 
-    result = database.add_result(rules.clean_name(data["name"]), data["score"])
+    match_id = rules.get_match_id(data)
+    result, is_new = database.add_result(rules.clean_name(data["name"]), data["score"], match_id)
+    if not is_new:
+        # The game sent this match before. Don't count it twice.
+        return jsonify({"ok": True, "duplicate": True, "result": result}), 200
     return jsonify({"ok": True, "result": result}), 201
 
 

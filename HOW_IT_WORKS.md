@@ -13,8 +13,13 @@ live.js       --GET /api/live-->      app.py  --> same data as JSON, every 5 sec
 1. Reads the JSON.
 2. If staff locked the results, sends back `423` and stops.
 3. Asks `rules.check_result()` if it's OK. If not, sends back `400` and the error.
-4. Saves it with `database.add_result()`.
-5. Sends back `201`.
+4. Saves it with `database.add_result()`. If the game sent a `match_id` that's already saved,
+   `ON CONFLICT DO NOTHING` skips the insert and we send back the old result with `200`.
+5. Otherwise sends back `201`.
+
+The database has a `UNIQUE` index on `match_id`, so even two copies of the same match arriving
+at the exact same moment can't both be saved. Results without a `match_id` (NULL) are never
+treated as duplicates.
 
 ## Ranking
 
@@ -53,6 +58,19 @@ If JavaScript is turned off, a `<noscript>` tag reloads the whole page every 10 
 `/display` uses the same pieces (`templates/parts/`) with bigger text, no menu, and the
 latest results scrolling across the bottom (a CSS animation in `space.css`).
 
+## Team pages
+
+`/team/<name>` finds the team with `rules.find_team()` and gets its results with
+`database.team_results()`. The line chart is plain SVG. `rules.chart_points()` loops over the
+scores and turns each one into an (x, y) spot: x spreads the matches evenly across 600 pixels,
+and y is the score's spot between the lowest and highest score, flipped because SVG counts y
+from the top. The chart always includes 0, so negative scores show below a dashed zero line.
+
+## Ties on the podium
+
+Only 3 cards fit on the podium. If more teams tie for a top-3 rank, `rules.also_tied()` lists
+the extras and the page shows "Also tied for a podium spot" under the podium.
+
 ## Look and feel
 
 Pico CSS does almost all the styling. We picked Pico's amber theme and changed a few of its
@@ -67,7 +85,8 @@ starts with `check_admin_path()`, which shows "page not found" unless the addres
 the secret `ADMIN_PATH`. The page also tells search engines not to list it.
 
 - **Delete and undo:** deleting moves the result to a `deleted_results` table instead of
-  erasing it. Undo moves the newest one back.
+  erasing it. Undo moves the newest one back. Both steps run in one transaction with
+  `run_together()`, so a crash can't leave a result in both tables or in neither.
 - **Settings:** the ranking mode, the lock and the announcement are rows in a `settings`
   table (`name`, `value`).
 - **Merge:** one `UPDATE` renames every result for a team.
@@ -84,5 +103,5 @@ escapes team names, so a team called `<script>` shows up as text and doesn't run
 ## Practice ideas
 
 1. Add a fourth ranking mode, like "most matches played".
-2. Add a page that shows one team's match history.
+2. Add a "best streak" number to the team page.
 3. Let the admin pick how many teams the big screen shows.

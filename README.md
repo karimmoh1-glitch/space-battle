@@ -43,6 +43,7 @@ lock. Make it long and random, and only give it to staff.
 |---|---|
 | `/` | Leaderboard (podium, standings, latest results) |
 | `/display` | Big screen for the projector |
+| `/team/<name>` | One team's stats, score chart and every match |
 | `/rules` | How ranking works |
 | `/api-guide` | How to send results |
 | `/about` | Team and credits |
@@ -63,11 +64,12 @@ lock. Make it long and random, and only give it to staff.
 ```bash
 curl -X POST https://space-battle-teal.vercel.app/api/results \
   -H "Content-Type: application/json" \
-  -d '{"name": "Nova Squad", "score": 250}'
+  -d '{"name": "Nova Squad", "score": 250, "match_id": "round2-match7"}'
 ```
 
 - `name`: text, 1 to 40 characters
 - `score`: whole number, can be negative
+- `match_id` (optional): if the same one is sent twice, it only counts once and the API returns `200` with `"duplicate": true`
 - Returns `201` if saved, `400` with an `error` message if not, and `423` if staff locked the results
 
 `GET /api/leaderboard` returns the teams as JSON. `GET /api/live` returns everything the
@@ -80,6 +82,7 @@ leaderboard page shows.
 | `app.py` | The web pages, the API, and the admin page |
 | `rules.py` | Checks results and ranks the teams |
 | `database.py` | All the SQL |
+| `templates/team.html` | A team's page with an SVG line chart |
 | `templates/` | The HTML pages (`templates/parts/` has pieces used by more than one page) |
 | `static/css/space.css` | Our colors, podium, starfield and big-screen styles |
 | `static/js/live.js` | Updates the leaderboard every 5 seconds |

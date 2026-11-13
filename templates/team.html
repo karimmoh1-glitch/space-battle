@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block title %}{{ team.name }}{% endblock %}
+
+{% block content %}
+      <!-- Preview -->
+      <section id="preview">
+        <p><a href="/">← Back to the leaderboard</a></p>
+        <h2>{{ team.name }}</h2>
+        <p>
+          Rank <strong>#{{ team.rank }}</strong> • ranked by {{ mode_label }}
+        </p>
+      </section>
+      <!-- ./ Preview -->
+
+      <!-- Stats -->
+      <div class="grid team-stats">
+        <article>
+          <small>Best</small>
+          <p class="podium-score">{{ team.best }}</p>
+        </article>
+        <article>
+          <small>Total</small>
+          <p class="podium-score">{{ team.total }}</p>
+        </article>
+        <article>
+          <small>Average</small>
+          <p class="podium-score">{{ team.average }}</p>
+        </article>
+        <article>
+          <small>Matches</small>
+          <p class="podium-score">{{ team.matches }}</p>
+        </article>
+      </div>
+      <!-- ./ Stats -->
+
+      <!-- Chart. rules.chart_points() works out where every dot goes. -->
+      <section id="chart">
+        <h2>Score in each match</h2>
+        <article>
+          <svg class="score-chart" viewBox="-20 -20 640 240" role="img"
+               aria-label="Line chart of {{ team.name }}'s score in each match">
+            <!-- The zero line -->
+            <line class="zero-line" x1="0" y1="{{ zero_y }}" x2="600" y2="{{ zero_y }}"></line>
+            <text class="chart-label" x="-16" y="{{ zero_y + 4 }}">0</text>
+
+            <!-- The line connecting the matches -->
+            <polyline class="score-line"
+                      points="{% for point in points %}{{ point.x }},{{ point.y }} {% endfor %}"></polyline>
+
+            <!-- One dot per match. Hover over a dot to see its score. -->
+            {% for point in points %}
+            <circle class="score-dot{% if point.score == team.best %} best{% endif %}"
+                    cx="{{ point.x }}" cy="{{ point.y }}" r="{% if point.score == team.best %}10{% else %}6{% endif %}">
+              <title>Match {{ point.match }}: {{ point.score }}</title>
+            </circle>
+            {% endfor %}
+          </svg>
+          <footer><small>Oldest match on the left. The bigger dot is the team's best match.</small></footer>
+        </article>
+      </section>
+      <!-- ./ Chart -->
+
+      <!-- Tables -->
+      <section id="tables">
+        <h2>Every match</h2>
+        <div class="overflow-auto">
+          <table class="striped">
+            <thead>
+              <tr>
+                <th scope="col">Match</th>
+                <th scope="col">Score</th>
+                <th scope="col">Time (UTC)</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for result in results %}
+              <tr>
+                <th scope="row">{{ results|length - loop.index0 }}</th>
+                <td>{% if result.score == team.best %}<strong>{{ result.score }}</strong> ⭐{% else %}{{ result.score }}{% endif %}</td>
+                <td>{{ result.created_at }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </section>
+      <!-- ./ Tables -->
+{% endblock %}

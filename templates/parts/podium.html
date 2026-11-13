@@ -1,4 +1,5 @@
       <!-- Top three. The CSS moves 1st place into the middle. -->
+      <div>
       <div class="podium" id="podium">
         {% for team in teams[:3] %}
         {% if team.rank == 1 %}{% set medal = "gold" %}{% elif team.rank == 2 %}{% set medal = "silver" %}{% else %}{% set medal = "bronze" %}{% endif %}
@@ -16,4 +17,8 @@
           <p>Scores show up here the second they come in.</p>
         </article>
         {% endfor %}
+      </div>
+      <p class="also-tied" id="also-tied" {% if also_tied|length == 0 %}hidden{% endif %}>
+        Also tied for a podium spot: <strong id="also-tied-names">{{ also_tied|join(", ") }}</strong>
+      </p>
       </div>

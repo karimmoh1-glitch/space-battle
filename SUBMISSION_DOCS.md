@@ -6,6 +6,7 @@ For the TSA@RHS Webmaster documentation form (due Thursday, Nov 12, end of day).
 
 **Live site:** https://space-battle-teal.vercel.app
 **Big screen (projector):** https://space-battle-teal.vercel.app/display
+**Team pages:** click any team on the leaderboard (`/team/<name>`) for its match history and score chart
 **Code:** https://github.com/karimmoh1-glitch/space-battle
 
 ## Sending a match result
@@ -14,31 +15,34 @@ For the TSA@RHS Webmaster documentation form (due Thursday, Nov 12, end of day).
 POST https://space-battle-teal.vercel.app/api/results
 Content-Type: application/json
 
-{"name": "Nova Squad", "score": 250}
+{"name": "Nova Squad", "score": 250, "match_id": "round2-match7"}
 ```
 
 | Field | Rules |
 |---|---|
 | `name` | Required. Text, 1 to 40 characters. Extra spaces are removed, and capital letters don't matter ("NOVA SQUAD" and "Nova Squad" are the same team). |
 | `score` | Required. A whole number, sent as a number, not text. Negative is fine. Limit ±1,000,000,000. |
+| `match_id` | Optional but recommended. Text or a whole number, 1 to 64 characters. If the same `match_id` is sent again (like a retry after a timeout), it's only counted once. |
 
 Example:
 
 ```bash
 curl -X POST https://space-battle-teal.vercel.app/api/results \
   -H "Content-Type: application/json" \
-  -d '{"name": "Nova Squad", "score": 250}'
+  -d '{"name": "Nova Squad", "score": 250, "match_id": "round2-match7"}'
 ```
 
 | Status | Meaning |
 |---|---|
 | `201` | Saved. The response is `{"ok": true, "result": {...}}`. |
+| `200` | Already saved: this `match_id` came in before, so it wasn't counted again. The response has `"duplicate": true`. |
 | `400` | Bad request. The response is `{"ok": false, "error": "..."}`, and the error says what's wrong. |
 | `413` | The body is bigger than 10 KB. |
 | `423` | Staff locked the results (tournament over). Nothing was saved. |
 | `503` | The database is down. Send it again. |
 
-Each POST is one match. Sending the same team again adds another match.
+Each POST is one match. Sending the same team again adds another match. Without a `match_id`, a
+repeated POST counts as a new match, so please send one if the game engine retries requests.
 
 ## Reading the leaderboard
 

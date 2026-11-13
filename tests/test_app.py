@@ -68,6 +68,35 @@ class RulesTests(unittest.TestCase):
         self.assertEqual(recent[1]["ago"], "2 min ago")
         self.assertFalse(recent[1]["new"])
 
+    def test_average_has_no_extra_zero(self):
+        results = [{"name": "A", "score": 100}, {"name": "A", "score": 200},
+                   {"name": "B", "score": 1}, {"name": "B", "score": 2}]
+        teams = rules.get_standings(results)
+        self.assertEqual(teams[0]["average"], 150)
+        self.assertEqual(type(teams[0]["average"]), int)
+        self.assertEqual(teams[1]["average"], 1.5)
+
+    def test_bad_match_ids(self):
+        for match_id in [True, 5.5, [], "", "   ", "x" * 65]:
+            self.assertIsNotNone(rules.check_result({"name": "A", "score": 1, "match_id": match_id}), match_id)
+        for match_id in [None, 17, "round-2-match-4"]:
+            self.assertIsNone(rules.check_result({"name": "A", "score": 1, "match_id": match_id}), match_id)
+
+    def test_also_tied(self):
+        results = [{"name": "A", "score": 9}, {"name": "B", "score": 9},
+                   {"name": "C", "score": 9}, {"name": "D", "score": 9}, {"name": "E", "score": 1}]
+        self.assertEqual(rules.also_tied(rules.get_standings(results)), ["D"])
+
+    def test_chart_points(self):
+        points, zero_y = rules.chart_points([100, -100, 300], 600, 200)
+        self.assertEqual(points[0]["x"], 0)
+        self.assertEqual(points[2]["x"], 600)
+        self.assertEqual(points[2]["y"], 0)      # the highest score is at the top
+        self.assertEqual(points[1]["y"], 200)    # the lowest score is at the bottom
+        self.assertEqual(zero_y, 150)
+        one_point, zero_y = rules.chart_points([0], 600, 200)
+        self.assertEqual(one_point[0]["x"], 300)
+
     def test_ties_share_a_rank(self):
         results = [{"name": "A", "score": 410}, {"name": "B", "score": 410},
                    {"name": "C", "score": 500}, {"name": "D", "score": 100}]
@@ -148,6 +177,48 @@ class WebsiteTests(unittest.TestCase):
         self.assertEqual(len(database.all_results()), 1)
         self.client.post("/ops/secret/reset", data={"confirm": "RESET"})
         self.assertEqual(database.all_results(), [])
+
+    def test_same_match_id_is_only_saved_once(self):
+        first = self.post({"name": "Nova", "score": 250, "match_id": 17})
+        again = self.post({"name": "Nova", "score": 250, "match_id": "17"})
+        self.assertEqual(first.status_code, 201)
+        self.assertEqual(again.status_code, 200)
+        self.assertTrue(again.get_json()["duplicate"])
+        self.assertEqual(again.get_json()["result"]["id"], first.get_json()["result"]["id"])
+        self.assertEqual(len(database.all_results()), 1)
+
+    def test_results_without_match_id_all_count(self):
+        self.post({"name": "Nova", "score": 5})
+        self.post({"name": "Nova", "score": 5})
+        self.assertEqual(len(database.all_results()), 2)
+
+    def test_undo_keeps_match_id(self):
+        self.post({"name": "Nova", "score": 5, "match_id": "m1"})
+        self.client.post(f"/ops/secret/delete/{database.all_results()[0]['id']}")
+        # While it's deleted, the same match can be sent again
+        self.assertEqual(self.post({"name": "Nova", "score": 5, "match_id": "m1"}).status_code, 201)
+        # Undo doesn't make a second copy of it
+        self.client.post("/ops/secret/undo")
+        self.assertEqual(len(database.all_results()), 1)
+        self.assertEqual(database.trash_count(), 0)
+
+    def test_team_page(self):
+        self.post({"name": "Nova Squad", "score": 100})
+        self.post({"name": "nova squad", "score": -40})
+        page = self.client.get("/team/NOVA%20SQUAD")
+        self.assertEqual(page.status_code, 200)
+        text = page.get_data(as_text=True)
+        self.assertIn("<polyline", text)
+        self.assertIn("Match 2: -40", text)
+        self.assertEqual(self.client.get("/team/Nobody").status_code, 404)
+
+    def test_team_page_name_with_slash(self):
+        self.post({"name": "Red/Blue", "score": 1})
+        self.assertEqual(self.client.get("/team/Red%2FBlue").status_code, 200)
+
+    def test_leaderboard_links_to_team_pages(self):
+        self.post({"name": "Nova Squad", "score": 1})
+        self.assertIn('href="/team/Nova%20Squad"', self.client.get("/").get_data(as_text=True))
 
     def test_live_json(self):
         self.post({"name": "Nova", "score": 5})

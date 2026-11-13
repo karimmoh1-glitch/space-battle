@@ -19,7 +19,7 @@
                 {% for team in shown %}
                 <tr>
                   <th scope="row">{{ team.rank }}</th>
-                  <td>{{ team.name }}</td>
+                  <td><a href="/team/{{ team.name|urlencode }}">{{ team.name }}</a></td>
                   <td>{{ team.best }}</td>
                   <td>{{ team.total }}</td>
                   <td>{{ team.average }}</td>

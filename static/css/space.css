@@ -253,6 +253,52 @@ tr.changed td {
   font-weight: bold;
 }
 
+.also-tied {
+  text-align: center;
+}
+
+/* ---------- Team page ---------- */
+.team-stats article {
+  text-align: center;
+}
+
+.team-stats .podium-score {
+  font-size: 2rem;
+}
+
+.score-chart {
+  display: block;
+  width: 100%;
+  max-width: 50rem;
+  height: auto;
+  margin: 0 auto;
+}
+
+.score-chart .zero-line {
+  stroke: var(--pico-muted-border-color);
+  stroke-width: 2;
+  stroke-dasharray: 6 6;
+}
+
+.score-chart .chart-label {
+  fill: var(--pico-muted-color);
+  font-size: 14px;
+}
+
+.score-chart .score-line {
+  fill: none;
+  stroke: var(--space-laser);
+  stroke-width: 3;
+}
+
+.score-chart .score-dot {
+  fill: var(--pico-primary);
+}
+
+.score-chart .score-dot.best {
+  fill: var(--space-gold);
+}
+
 /* ---------- Phones: stack everything ---------- */
 @media (max-width: 768px) {
   .podium,
