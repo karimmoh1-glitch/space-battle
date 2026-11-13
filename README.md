@@ -1,6 +1,7 @@
 # 🚀 Space Battle Leaderboard
 
-A live leaderboard for the Space Battle tournament, made for the TSA@RHS Webmaster qualifier.
+A live leaderboard for the Space Battle tournament, made for the Redmond High School TSA Webmaster qualifier
+by Karim Mohamed and Dmitriy Bondar.
 Match results come in through an API, the leaderboard updates itself every 5 seconds without
 reloading, there's a big-screen mode for the projector, and a hidden admin page gives staff
 the tools they need on game day.
@@ -116,5 +117,4 @@ project settings, not in the code.
 
 ## Before submitting
 
-- Put your real names in `templates/about.html`
 - Check the competition's rules on AI use

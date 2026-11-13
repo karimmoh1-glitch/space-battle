@@ -1,5 +1,7 @@
 # Space Battle: Endpoint and Admin Panel Documentation
 
+Redmond High School TSA, Webmaster qualifier. Team: Karim Mohamed and Dmitriy Bondar.
+
 For the TSA@RHS Webmaster documentation form (due Thursday, Nov 12, end of day).
 
 **Live site:** https://space-battle-teal.vercel.app
