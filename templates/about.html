@@ -6,9 +6,24 @@
       <section id="typography">
         <h2>About</h2>
         <p>
-          Space Battle is a tournament where teams compete for the highest score. This site shows
-          the scores live as each match ends.
+          Space Battle is a tournament where autonomous bots fight in an arena. This site is Mission
+          Control: the game sends every match result here, and the leaderboard updates on its own
+          within 5 seconds.
         </p>
+
+        <h3>Why the board looks like this</h3>
+        <p>
+          The leaderboard gets projected for pit crews and the crowd, so we designed it to be read
+          from far away in a few seconds:
+        </p>
+        <ul>
+          <li><strong>Top 3 first.</strong> The podium is the biggest thing on the screen because that's what people look for.</li>
+          <li><strong>Best match by default.</strong> We compared ranking by best match, total and average. Total punishes teams that get fewer matches, and average punishes one bad crash, so best match is the fairest default. Staff can switch if the event needs it.</li>
+          <li><strong>Show what changed.</strong> Arrows, NEW tags, flashing rows and the latest results list let people see what just happened without reading the whole table.</li>
+          <li><strong>No reloading.</strong> The page asks the server for new scores every 5 seconds and only changes the numbers, so the screen doesn't blink.</li>
+          <li><strong>Big Screen mode.</strong> <a href="/display">/display</a> hides the menu, uses bigger text, always uses the dark space theme, and scrolls the latest results across the bottom.</li>
+          <li><strong>Tools for staff.</strong> The hidden admin page can fix scores, merge misspelled team names, undo deletes, post announcements, lock the final results and download a backup.</li>
+        </ul>
 
         <!-- Lists-->
         <h3>Our team</h3>
@@ -21,7 +36,8 @@
 
         <h3>Credits</h3>
         <ul>
-          <li><a href="https://picocss.com">Pico CSS</a>: page layout, styling, theme switcher and modal scripts, from the Pico v2 examples (MIT license)</li>
+          <li><a href="https://picocss.com">Pico CSS</a> (amber theme): page layout, styling, theme switcher and modal scripts, from the Pico v2 examples (MIT license)</li>
+          <li><a href="https://fonts.google.com/specimen/Orbitron">Orbitron</a> font by Matt McInerney, from Google Fonts (SIL Open Font License)</li>
           <li><a href="https://flask.palletsprojects.com">Flask</a>: Python web framework (BSD license)</li>
           <li><a href="https://sqlite.org">SQLite</a> and <a href="https://neon.com">Neon Postgres</a>: databases</li>
           <li><a href="https://www.psycopg.org">psycopg</a>: connects Python to Postgres (LGPL license)</li>

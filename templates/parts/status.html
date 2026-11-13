@@ -1,0 +1,16 @@
+      <!-- Live status line. live.js keeps the numbers up to date. -->
+      <p>
+        <span class="live-dot" id="live-dot"></span>
+        <span id="live-status">Live</span> •
+        <span id="team-count">{{ teams|length }}</span> teams •
+        <span id="match-count">{{ match_count }}</span> matches •
+        ranked by <strong id="mode-label">{{ mode_label }}</strong>
+      </p>
+
+      <!-- Banners the admin can turn on -->
+      <article class="banner locked" id="locked-banner" {% if not locked %}hidden{% endif %}>
+        🏁 Final results. The tournament is over and no new scores are being taken.
+      </article>
+      <article class="banner" id="announcement" {% if announcement == "" %}hidden{% endif %}>
+        📣 <span id="announcement-text">{{ announcement }}</span>
+      </article>

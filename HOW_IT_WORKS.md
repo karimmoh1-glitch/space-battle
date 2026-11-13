@@ -3,6 +3,7 @@
 ```
 Match system  --POST /api/results-->  app.py  --> rules.py checks it --> database.py saves it
 Browser       --GET /-->              app.py  --> rules.py ranks the teams --> index.html
+live.js       --GET /api/live-->      app.py  --> same data as JSON, every 5 seconds
 ```
 
 ## Saving a score
@@ -10,15 +11,17 @@ Browser       --GET /-->              app.py  --> rules.py ranks the teams --> i
 `add_result()` in `app.py`:
 
 1. Reads the JSON.
-2. Asks `rules.check_result()` if it's OK. If not, sends back `400` and the error.
-3. Saves it with `database.add_result()`.
-4. Sends back `201`.
+2. If staff locked the results, sends back `423` and stops.
+3. Asks `rules.check_result()` if it's OK. If not, sends back `400` and the error.
+4. Saves it with `database.add_result()`.
+5. Sends back `201`.
 
 ## Ranking
 
 `get_standings()` in `rules.py` loops over every result and builds a dictionary with one
 entry per team (using the lowercase name, so "NOVA" and "Nova" are the same team). Then it
-sorts the teams by best score. In the last loop, if a team has the same best score as the
+works out each team's average and sorts the teams by the number the admin picked (`mode` is
+`"best"`, `"total"` or `"average"`). In the last loop, if a team has the same number as the
 team before it, it gets the same rank. That's how ranks go 1, 2, 2, 4.
 
 Totals are never saved. They're added up every time the page loads. So if two scores
@@ -34,15 +37,43 @@ Postgres. The SQL is the same except Postgres wants `%s` instead of `?`, so `run
 
 ## Live updates
 
-`index.html` has `<meta http-equiv="refresh" content="5">`, which makes the browser reload
-the page every 5 seconds.
+The server builds the first version of the page. After that, `static/js/live.js` runs
+`update()` every 5 seconds:
+
+1. `fetch("/api/live")` gets the newest data as JSON.
+2. `updateArrows()` compares each team's rank to the last update. If it went up, it gets a
+   ▲ for 6 updates (30 seconds). It also notes which teams played a new match, so their row flashes.
+3. `showPodium()`, `showStandings()` and `showRecent()` empty each part of the page and
+   rebuild it with a `for` loop. They use `textContent`, never `innerHTML`, so a team name
+   can't sneak code onto the page.
+4. If the fetch fails, the page keeps the old scores and says "Connection lost, retrying".
+
+If JavaScript is turned off, a `<noscript>` tag reloads the whole page every 10 seconds instead.
+
+`/display` uses the same pieces (`templates/parts/`) with bigger text, no menu, and the
+latest results scrolling across the bottom (a CSS animation in `space.css`).
+
+## Look and feel
+
+Pico CSS does almost all the styling. We picked Pico's amber theme and changed a few of its
+CSS variables in `space.css` to get the dark "deep space" colors. The stars are small
+`radial-gradient` dots repeated across the background. The podium uses CSS grid, and
+`order` moves 1st place into the middle.
 
 ## Admin page
 
-The address is secret (`ADMIN_PATH`), but a secret address isn't real security. The password
-is. When you log in, Flask remembers it in `session`, which is a signed cookie. Every admin
-route checks `logged_in()` first. Delete and reset ask "are you sure?", and reset only works
-if you type RESET.
+The challenge asks for security through obscurity, so there's no login. Every admin route
+starts with `check_admin_path()`, which shows "page not found" unless the address matches
+the secret `ADMIN_PATH`. The page also tells search engines not to list it.
+
+- **Delete and undo:** deleting moves the result to a `deleted_results` table instead of
+  erasing it. Undo moves the newest one back.
+- **Settings:** the ranking mode, the lock and the announcement are rows in a `settings`
+  table (`name`, `value`).
+- **Merge:** one `UPDATE` renames every result for a team.
+- **CSV:** Python's `csv` module writes every result. Names starting with `=` get a `'` in
+  front so Excel doesn't run them as formulas.
+- Delete and lock ask "are you sure?", and reset only works if you type RESET.
 
 ## Templates
 
@@ -52,6 +83,6 @@ escapes team names, so a team called `<script>` shows up as text and doesn't run
 
 ## Practice ideas
 
-1. Rank teams by total score instead of best score. Which tests break?
+1. Add a fourth ranking mode, like "most matches played".
 2. Add a page that shows one team's match history.
-3. Show the time of each team's last match on the leaderboard.
+3. Let the admin pick how many teams the big screen shows.

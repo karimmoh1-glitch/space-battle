@@ -1,0 +1,38 @@
+        <!-- Tables -->
+        <section id="tables">
+          <h2>Standings</h2>
+          <div class="overflow-auto">
+            <table class="striped">
+              <thead>
+                <tr>
+                  <th scope="col">Rank</th>
+                  <th scope="col">Team</th>
+                  <th scope="col" data-mode="best" {% if mode == "best" %}class="active"{% endif %}>Best</th>
+                  <th scope="col" data-mode="total" {% if mode == "total" %}class="active"{% endif %}>Total</th>
+                  <th scope="col" data-mode="average" {% if mode == "average" %}class="active"{% endif %}>Average</th>
+                  <th scope="col">Matches</th>
+                  <th scope="col">Move</th>
+                </tr>
+              </thead>
+              <tbody id="standings" data-limit="{{ limit }}">
+                {% set shown = teams if limit == 0 else teams[:limit] %}
+                {% for team in shown %}
+                <tr>
+                  <th scope="row">{{ team.rank }}</th>
+                  <td>{{ team.name }}</td>
+                  <td>{{ team.best }}</td>
+                  <td>{{ team.total }}</td>
+                  <td>{{ team.average }}</td>
+                  <td>{{ team.matches }}</td>
+                  <td></td>
+                </tr>
+                {% else %}
+                <tr>
+                  <td colspan="7">No matches yet.</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </section>
+        <!-- ./ Tables -->

@@ -1,0 +1,410 @@
+/* space.css
+   Our Space Battle look, added on top of Pico CSS (amber theme).
+   Pico is built to be changed with CSS variables: https://picocss.com/docs/css-variables
+   Everything else on the page is still plain Pico. */
+
+/* ---------- Colors we use everywhere ---------- */
+:root {
+  --space-font: "Orbitron", system-ui, sans-serif;
+  --space-gold: #9a7000;
+  --space-silver: #5f6b7d;
+  --space-bronze: #a0522d;
+  --space-laser: #1f6fae;
+  --space-up: #1a7f37;
+  --space-down: #c62828;
+}
+
+/* ---------- Dark mode is "deep space" ---------- */
+/* Pico uses these two selectors for dark mode, so we do too. */
+[data-theme="dark"] {
+  --pico-background-color: #070b18;
+  --pico-card-background-color: #10172e;
+  --pico-card-sectioning-background-color: #161f3d;
+  --pico-table-row-stripped-background-color: rgba(127, 212, 255, 0.04);
+  --pico-muted-border-color: #1f2a4d;
+  --space-gold: #f5c542;
+  --space-silver: #b8c2d6;
+  --space-bronze: #d08a4e;
+  --space-laser: #7fd4ff;
+  --space-up: #3ddc84;
+  --space-down: #ff7b7b;
+}
+
+@media only screen and (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --pico-background-color: #070b18;
+    --pico-card-background-color: #10172e;
+    --pico-card-sectioning-background-color: #161f3d;
+    --pico-table-row-stripped-background-color: rgba(127, 212, 255, 0.04);
+    --pico-muted-border-color: #1f2a4d;
+    --space-gold: #f5c542;
+    --space-silver: #b8c2d6;
+    --space-bronze: #d08a4e;
+    --space-laser: #7fd4ff;
+    --space-up: #3ddc84;
+    --space-down: #ff7b7b;
+  }
+}
+
+/* Stars: lots of tiny white dots made with gradients, repeated across the page. */
+[data-theme="dark"] body {
+  background-image:
+    radial-gradient(1px 1px at 25px 35px, #ffffff, transparent),
+    radial-gradient(1px 1px at 90px 140px, #ffffffaa, transparent),
+    radial-gradient(1.5px 1.5px at 160px 60px, #ffffff, transparent),
+    radial-gradient(1px 1px at 210px 190px, #7fd4ffaa, transparent),
+    radial-gradient(1px 1px at 270px 100px, #ffffffaa, transparent),
+    radial-gradient(1.5px 1.5px at 60px 240px, #ffd866aa, transparent),
+    radial-gradient(ellipse at 85% -10%, #1b2a5c 0%, transparent 55%);
+  background-size: 300px 280px, 300px 280px, 300px 280px, 300px 280px,
+    300px 280px, 300px 280px, 100% 100%;
+  background-attachment: fixed;
+}
+
+/* ---------- Header ---------- */
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.brand img {
+  width: 3rem;
+  height: 3rem;
+}
+
+.brand h1,
+.display-title {
+  font-family: var(--space-font);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* Let the menu wrap onto two lines on small phones */
+header nav ul {
+  flex-wrap: wrap;
+}
+
+/* ---------- Live status line ---------- */
+.live-dot {
+  display: inline-block;
+  width: 0.6rem;
+  height: 0.6rem;
+  border-radius: 50%;
+  background: var(--space-up);
+  animation: pulse 2s infinite;
+}
+
+.live-dot.offline {
+  background: var(--space-down);
+  animation: none;
+}
+
+@keyframes pulse {
+  50% {
+    opacity: 0.3;
+  }
+}
+
+/* ---------- Banners ---------- */
+.banner {
+  border-left: 0.35rem solid var(--pico-primary);
+  font-weight: bold;
+}
+
+.banner.locked {
+  border-left-color: var(--space-down);
+}
+
+/* ---------- Podium (top 3). 1st place goes in the middle. ---------- */
+.podium {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr 1fr;
+  align-items: end;
+  gap: var(--pico-grid-column-gap);
+  margin-bottom: var(--pico-spacing);
+}
+
+.podium article {
+  text-align: center;
+  margin-bottom: 0;
+}
+
+.podium article:nth-child(1) {
+  order: 2;
+  padding-top: 2.5rem;
+  padding-bottom: 2.5rem;
+}
+
+.podium article:nth-child(2) {
+  order: 1;
+}
+
+.podium article:nth-child(3) {
+  order: 3;
+}
+
+.podium .place {
+  font-family: var(--space-font);
+  font-weight: 800;
+  letter-spacing: 0.1em;
+}
+
+.podium h3 {
+  margin-bottom: 0.25rem;
+}
+
+.podium-score {
+  font-family: var(--space-font);
+  font-size: 2.25rem;
+  font-weight: 800;
+  margin-bottom: 0;
+  color: var(--pico-primary);
+}
+
+.place-gold {
+  border-top: 0.4rem solid var(--space-gold);
+}
+
+.place-gold .place {
+  color: var(--space-gold);
+}
+
+.place-silver {
+  border-top: 0.4rem solid var(--space-silver);
+}
+
+.place-silver .place {
+  color: var(--space-silver);
+}
+
+.place-bronze {
+  border-top: 0.4rem solid var(--space-bronze);
+}
+
+.place-bronze .place {
+  color: var(--space-bronze);
+}
+
+/* ---------- Standings table + latest results side by side ---------- */
+.board {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: var(--pico-grid-column-gap);
+}
+
+/* Without this, a wide table would stretch the grid past the screen on phones */
+.board > *,
+.stage > * {
+  min-width: 0;
+}
+
+/* The column the teams are ranked by */
+th.active {
+  color: var(--pico-primary);
+}
+
+.move-up {
+  color: var(--space-up);
+  font-weight: bold;
+}
+
+.move-down {
+  color: var(--space-down);
+  font-weight: bold;
+}
+
+.move-new {
+  color: var(--space-laser);
+  font-weight: bold;
+}
+
+/* A row flashes when that team just played a match */
+tr.changed th,
+tr.changed td {
+  animation: flash 3s ease-out;
+}
+
+@keyframes flash {
+  from {
+    background-color: rgba(255, 191, 0, 0.35);
+  }
+}
+
+/* ---------- Latest results list ---------- */
+.recent ul {
+  padding-left: 0;
+}
+
+.recent li {
+  list-style: none;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--pico-muted-border-color);
+}
+
+.recent .score {
+  float: right;
+  font-family: var(--space-font);
+  color: var(--pico-primary);
+}
+
+.recent .new-tag {
+  color: var(--space-laser);
+  font-weight: bold;
+}
+
+/* ---------- Phones: stack everything ---------- */
+@media (max-width: 768px) {
+  .podium,
+  .board {
+    grid-template-columns: 1fr;
+  }
+
+  .podium article:nth-child(1),
+  .podium article:nth-child(2),
+  .podium article:nth-child(3) {
+    order: 0;
+    padding-top: var(--pico-block-spacing-vertical);
+    padding-bottom: var(--pico-block-spacing-vertical);
+  }
+}
+
+/* ---------- Big screen page (/display) ---------- */
+.display main {
+  padding-top: 1rem;
+  padding-bottom: 4.5rem; /* room for the ticker */
+}
+
+.display .stage {
+  display: grid;
+  grid-template-columns: 2fr 3fr;
+  gap: var(--pico-grid-column-gap);
+  align-items: start;
+}
+
+/* On the big screen the podium is one column: 1st, 2nd, 3rd from the top */
+.display .podium {
+  grid-template-columns: 1fr;
+  gap: 0.75rem;
+}
+
+.display .podium article:nth-child(1),
+.display .podium article:nth-child(2),
+.display .podium article:nth-child(3) {
+  order: 0;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+
+@media (max-width: 1024px) {
+  .display .stage {
+    grid-template-columns: 1fr;
+  }
+}
+
+.display th,
+.display td {
+  padding-top: 0.4rem;
+  padding-bottom: 0.4rem;
+}
+
+.display h2 {
+  margin-bottom: 0.5rem;
+}
+
+.display .top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.display-title {
+  font-size: 2.5rem;
+  margin-bottom: 0;
+}
+
+.display table {
+  font-size: 1.3rem;
+}
+
+.display .podium-score {
+  font-size: 2.6rem;
+  line-height: 1.1;
+}
+
+.display .podium h3 {
+  font-size: 1.6rem;
+}
+
+/* The latest results scroll across the bottom like a news ticker */
+.display .recent {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+  background: var(--pico-card-sectioning-background-color);
+  border-top: 2px solid var(--pico-primary);
+  padding: 0.75rem 0;
+}
+
+.display .recent h2 {
+  display: none;
+}
+
+.display .recent ul {
+  display: flex;
+  gap: 3rem;
+  margin: 0;
+  white-space: nowrap;
+  width: max-content;
+  animation: ticker 40s linear infinite;
+}
+
+.display .recent li {
+  border: none;
+  padding: 0;
+  font-size: 1.3rem;
+}
+
+.display .recent .score {
+  float: none;
+  margin-left: 0.5rem;
+}
+
+/* One line per result in the ticker */
+.display .recent br {
+  display: none;
+}
+
+.display .recent small {
+  margin-left: 0.5rem;
+}
+
+@keyframes ticker {
+  from {
+    transform: translateX(100vw);
+  }
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+/* Turn off the moving parts for people who asked their computer for less motion */
+@media (prefers-reduced-motion: reduce) {
+  .live-dot,
+  tr.changed th,
+  tr.changed td,
+  .display .recent ul {
+    animation: none;
+  }
+
+  .display .recent ul {
+    flex-wrap: wrap;
+    width: auto;
+    white-space: normal;
+    padding: 0 1rem;
+  }
+}

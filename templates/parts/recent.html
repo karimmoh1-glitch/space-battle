@@ -1,0 +1,15 @@
+        <!-- Latest results (on the big screen this becomes a scrolling ticker) -->
+        <section class="recent">
+          <h2>Latest results</h2>
+          <ul id="recent">
+            {% for result in recent %}
+            <li>
+              <strong>{{ result.name }}</strong>
+              <span class="score">{{ result.score }}</span>
+              <br><small>{% if result.new %}<span class="new-tag">NEW</span> {% endif %}{{ result.ago }}</small>
+            </li>
+            {% else %}
+            <li>No results yet.</li>
+            {% endfor %}
+          </ul>
+        </section>

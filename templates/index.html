@@ -2,76 +2,27 @@
 {% block title %}Leaderboard{% endblock %}
 
 {% block head %}
-    <!-- Reload the page every 5 seconds so new scores show up -->
-    <meta http-equiv="refresh" content="5">
+    <!-- live.js updates the page every 5 seconds. If JavaScript is off, reload the page instead. -->
+    <noscript><meta http-equiv="refresh" content="10"></noscript>
 {% endblock %}
 
 {% block content %}
       <!-- Preview -->
       <section id="preview">
         <h2>Leaderboard</h2>
-        <p>
-          {{ teams|length }} teams • {{ match_count }} matches • updates every 5 seconds
-        </p>
+{% include "parts/status.html" %}
       </section>
       <!-- ./ Preview -->
 
-      {% if teams|length == 0 %}
-      <!-- Article-->
-      <article id="article">
-        <h2>No scores yet</h2>
-        <p>
-          The board fills in as soon as the first match is sent in.
-        </p>
-      </article>
-      <!-- ./ Article-->
-      {% else %}
-      <!-- Top three -->
-      <div class="grid">
-        {% for team in teams[:3] %}
-        <!-- Article-->
-        <article>
-          <h2>{{ team.name }}</h2>
-          <p>
-            Best score: <strong>{{ team.best }}</strong>
-          </p>
-          <footer>
-            <small>{% if team.rank == 1 %}🥇{% elif team.rank == 2 %}🥈{% else %}🥉{% endif %} Rank {{ team.rank }}</small>
-          </footer>
-        </article>
-        <!-- ./ Article-->
-        {% endfor %}
-      </div>
-      <!-- ./ Top three -->
+{% include "parts/podium.html" %}
 
-      <!-- Tables -->
-      <section id="tables">
-        <h2>Standings</h2>
-        <div class="overflow-auto">
-          <table class="striped">
-            <thead>
-              <tr>
-                <th scope="col">Rank</th>
-                <th scope="col">Team</th>
-                <th scope="col">Best score</th>
-                <th scope="col">Total</th>
-                <th scope="col">Matches</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for team in teams %}
-              <tr>
-                <th scope="row">{{ team.rank }}</th>
-                <td>{{ team.name }}</td>
-                <td><strong>{{ team.best }}</strong></td>
-                <td>{{ team.total }}</td>
-                <td>{{ team.matches }}</td>
-              </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-        </div>
-      </section>
-      <!-- ./ Tables -->
-      {% endif %}
+      <div class="board">
+{% with limit = 0 %}{% include "parts/standings.html" %}{% endwith %}
+{% include "parts/recent.html" %}
+      </div>
+{% endblock %}
+
+{% block scripts %}
+    <!-- Live updates -->
+    <script src="/static/js/live.js"></script>
 {% endblock %}

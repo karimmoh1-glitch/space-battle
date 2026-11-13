@@ -6,12 +6,28 @@
       <section id="typography">
         <h2>Rules</h2>
         <p>
-          Each team is ranked by its <strong>best score from a single match</strong>. A bad match
-          never lowers a team's rank. The leaderboard also shows each team's total and how many
-          matches it played.
+          Unless staff say otherwise, each team is ranked by its <strong>best score from a single
+          match</strong>. A bad match never lowers a team's rank. The leaderboard also shows each
+          team's total, its average, and how many matches it played.
         </p>
 
         <!-- Lists-->
+        <h3>Ranking options</h3>
+        <p>Tournament staff can switch the ranking at any time. The board always says which one is in use.</p>
+        <ul>
+          <li><strong>Best single match</strong> (default): fair to teams that play fewer matches.</li>
+          <li><strong>Total points</strong>: rewards teams that play a lot and score every time.</li>
+          <li><strong>Average per match</strong>: rewards being consistent.</li>
+        </ul>
+
+        <h3>Reading the board</h3>
+        <ul>
+          <li><span class="move-up">▲</span> and <span class="move-down">▼</span> show a team moving up or down in the last 30 seconds. <span class="move-new">NEW</span> is a team's first match.</li>
+          <li>A row flashes when that team just finished a match.</li>
+          <li>Latest results lists the last 8 matches, newest first.</li>
+          <li>When staff lock the results, the board says <strong>Final results</strong> and no more scores are taken.</li>
+        </ul>
+
         <h3>Other rules</h3>
         <ul>
           <li>Scores are whole numbers and can be negative.</li>
@@ -24,7 +40,7 @@
       <!-- Tables -->
       <section id="tables">
         <h2>Ties</h2>
-        <p>Teams with the same best score share a rank, and the next rank is skipped.</p>
+        <p>Teams with the same score share a rank, and the next rank is skipped. Here teams are ranked by best score:</p>
         <div class="overflow-auto">
           <table class="striped">
             <thead>
@@ -80,6 +96,13 @@
           <summary>What if a score was entered wrong?</summary>
           <p>
             Tell the tournament staff. They can fix or delete any result from the admin page.
+          </p>
+        </details>
+        <details>
+          <summary>Our team shows up twice with different spellings. What happens?</summary>
+          <p>
+            Capital letters and spaces are already ignored. For anything else (like "Nova" and
+            "Nova Squad"), staff can merge the two names into one team.
           </p>
         </details>
       </section>

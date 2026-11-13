@@ -9,24 +9,37 @@
     <title>{% block title %}{% endblock %} • Space Battle</title>
     <meta name="description" content="Live leaderboard for the Space Battle tournament.">
 
-    <!-- Pico.css -->
+    <link rel="icon" href="/static/img/logo.svg" type="image/svg+xml">
+
+    <!-- Pico.css (amber color theme) -->
     <link
       rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/@picocss/pico@2.1.1/css/pico.min.css"
+      href="https://cdn.jsdelivr.net/npm/@picocss/pico@2.1.1/css/pico.amber.min.css"
     >
+    <!-- Orbitron font from Google Fonts, for headings and scores -->
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&display=swap"
+    >
+    <!-- Our Space Battle colors, on top of Pico -->
+    <link rel="stylesheet" href="/static/css/space.css">
     {% block head %}{% endblock %}
   </head>
 
   <body>
     <!-- Header -->
     <header class="container">
-      <hgroup>
-        <h1>🚀 Space Battle</h1>
-        <p>Live tournament leaderboard.</p>
-      </hgroup>
+      <div class="brand">
+        <img src="/static/img/logo.svg" alt="">
+        <hgroup>
+          <h1>Space Battle</h1>
+          <p>Mission Control • live tournament leaderboard</p>
+        </hgroup>
+      </div>
       <nav>
         <ul>
           <li><a href="/">Leaderboard</a></li>
+          <li><a href="/display">Big Screen</a></li>
           <li><a href="/rules">Rules</a></li>
           <li><a href="/api-guide">API</a></li>
           <li><a href="/about">About</a></li>

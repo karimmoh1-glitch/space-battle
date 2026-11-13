@@ -19,9 +19,21 @@
   -H "Content-Type: application/json" \
   -d '{"name": "Nova Squad", "score": 250}'</code></pre>
 
+        <h3>What you get back</h3>
+        <pre><code>{
+  "ok": true,
+  "result": { "id": 12, "name": "Nova Squad", "score": 250, "created_at": "2026-11-14 15:04:05" }
+}</code></pre>
+
         <h3>Get the leaderboard</h3>
         <p>
-          <code>GET /api/leaderboard</code> returns every team as JSON, best first.
+          <code>GET /api/leaderboard</code> returns every team as JSON, in rank order. Each team
+          has <code>rank</code>, <code>name</code>, <code>best</code>, <code>total</code>,
+          <code>average</code> and <code>matches</code>.
+        </p>
+        <p>
+          <code>GET /api/live</code> returns everything the leaderboard page shows: the teams, the
+          latest results, the ranking mode, the announcement and whether results are locked.
         </p>
       </section>
       <!-- ./ Typography-->
@@ -40,11 +52,11 @@
             <tbody>
               <tr>
                 <th scope="row"><code>name</code></th>
-                <td>Required. Text, 1 to 40 characters.</td>
+                <td>Required. Text, 1 to 40 characters. Extra spaces are removed, and capital letters don't matter.</td>
               </tr>
               <tr>
                 <th scope="row"><code>score</code></th>
-                <td>Required. A whole number. Can be negative.</td>
+                <td>Required. A whole number (not <code>"250"</code> or <code>250.5</code>). Can be negative.</td>
               </tr>
             </tbody>
           </table>
@@ -67,6 +79,10 @@
               <tr>
                 <th scope="row">400</th>
                 <td>Something is wrong with the request. The <code>error</code> field says what.</td>
+              </tr>
+              <tr>
+                <th scope="row">423</th>
+                <td>Results are locked because the tournament is over. Nothing was saved.</td>
               </tr>
               <tr>
                 <th scope="row">413</th>

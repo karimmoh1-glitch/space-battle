@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<!-- Big-screen page for the projector. Same Pico CSS setup as base.html, but no menu
+     and always in dark mode, so it's easy to read from across the arena. -->
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Big Screen • Space Battle</title>
+    <link rel="icon" href="/static/img/logo.svg" type="image/svg+xml">
+
+    <!-- Pico.css (amber color theme) -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@picocss/pico@2.1.1/css/pico.amber.min.css"
+    >
+    <!-- Orbitron font from Google Fonts -->
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&display=swap"
+    >
+    <link rel="stylesheet" href="/static/css/space.css">
+    <noscript><meta http-equiv="refresh" content="10"></noscript>
+  </head>
+
+  <body class="display">
+    <!-- Main -->
+    <main class="container-fluid">
+      <div class="top-bar">
+        <div class="brand">
+          <img src="/static/img/logo.svg" alt="">
+          <h1 class="display-title">Space Battle</h1>
+        </div>
+        <button class="outline secondary" id="fullscreen-button">Full screen</button>
+      </div>
+
+{% include "parts/status.html" %}
+
+      <!-- Podium on the left, standings on the right, to fit a wide projector screen -->
+      <div class="stage">
+{% include "parts/podium.html" %}
+{% with limit = 10 %}{% include "parts/standings.html" %}{% endwith %}
+      </div>
+    </main>
+    <!-- ./ Main -->
+
+{% include "parts/recent.html" %}
+
+    <script src="/static/js/live.js"></script>
+    <script>
+      // The full screen button hides the browser's address bar on the projector.
+      document.getElementById("fullscreen-button").addEventListener("click", function () {
+        document.documentElement.requestFullscreen();
+      });
+    </script>
+  </body>
+</html>

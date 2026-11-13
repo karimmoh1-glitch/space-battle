@@ -1,0 +1,19 @@
+      <!-- Top three. The CSS moves 1st place into the middle. -->
+      <div class="podium" id="podium">
+        {% for team in teams[:3] %}
+        {% if team.rank == 1 %}{% set medal = "gold" %}{% elif team.rank == 2 %}{% set medal = "silver" %}{% else %}{% set medal = "bronze" %}{% endif %}
+        <!-- Article-->
+        <article class="place-{{ medal }}">
+          <span class="place">{% if team.rank == 1 %}1ST{% elif team.rank == 2 %}2ND{% else %}3RD{% endif %}</span>
+          <h3>{{ team.name }}</h3>
+          <p class="podium-score">{{ team[mode] }}</p>
+          <small>{{ team.matches }} matches • best {{ team.best }}</small>
+        </article>
+        <!-- ./ Article-->
+        {% else %}
+        <article>
+          <h3>Waiting for the first match…</h3>
+          <p>Scores show up here the second they come in.</p>
+        </article>
+        {% endfor %}
+      </div>
